@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -75,6 +76,27 @@ public final class CabecasManager implements Listener {
         }
 
         event.getDrops().add(cabeca);
+    }
+
+
+    public ItemStack criarCabecaPorNome(String nome) {
+        EntityType tipo = null;
+        String alvo = nome.toLowerCase().replace('_', ' ');
+        for (EntityType candidate : EntityType.values()) {
+            if (candidate.name().toLowerCase().equals(alvo.replace(' ', '_'))) {
+                tipo = candidate;
+                break;
+            }
+        }
+        if (tipo == null) return null;
+
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(color("&fCabeça de " + nomeEntidade(tipo)));
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     private boolean rolou(double chance) {
