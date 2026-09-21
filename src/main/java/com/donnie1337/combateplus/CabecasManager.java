@@ -101,22 +101,33 @@ public final class CabecasManager implements Listener {
     }
 
     private ItemStack criarCabeca(EntityType tipo) {
-        String textura = TEXTURAS.get(tipo);
-        if (textura == null) return null;
+        Material material = switch (tipo) {
+            case ZOMBIE -> Material.ZOMBIE_HEAD;
+            case SKELETON -> Material.SKELETON_SKULL;
+            case CREEPER -> Material.CREEPER_HEAD;
+            case PIGLIN -> Material.PIGLIN_HEAD;
+            default -> Material.PLAYER_HEAD;
+        };
 
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        String textura = TEXTURAS.get(tipo);
+
+        ItemStack item = new ItemStack(material);
         ItemMeta rawMeta = item.getItemMeta();
 
         if (!(rawMeta instanceof SkullMeta meta)) return item;
 
         meta.setDisplayName(color("&fCabeça de " + nomeEntidade(tipo)));
 
-        try {
-            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
-            profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/" + textura));
-            meta.setOwnerProfile(profile);
-        } catch (MalformedURLException exception) {
-            plugin.getLogger().warning("Textura inválida para " + tipo.name() + ".");
+        // Cabeças vanilla usam sua própria textura e não precisam de PlayerProfile.
+        // Animais que não possuem um item de cabeça vanilla continuam usando textura customizada.
+        if (material == Material.PLAYER_HEAD && textura != null) {
+            try {
+                PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
+                profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/" + textura));
+                meta.setOwnerProfile(profile);
+            } catch (MalformedURLException exception) {
+                plugin.getLogger().warning("Textura inválida para " + tipo.name() + ".");
+            }
         }
 
         item.setItemMeta(meta);
