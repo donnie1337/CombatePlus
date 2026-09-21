@@ -1,0 +1,43 @@
+name: Build CombatePlus
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 26
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '26'
+          cache: maven
+
+      - name: Verificar ambiente
+        run: |
+          set -euo pipefail
+          java -version
+          javac -version
+          mvn -version
+
+      - name: Compilar
+        run: mvn -B clean package
+
+      - name: Publicar JAR
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: CombatePlus
+          path: target/*.jar
+          if-no-files-found: error
