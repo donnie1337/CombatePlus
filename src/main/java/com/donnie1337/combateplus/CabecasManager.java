@@ -108,6 +108,10 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.WITHER, "5da97c06c07a035bd8746b48d32dc04e84160bd161f26be1272b6271251aaa7")
     );
 
+    private static final Map<String, String> TEXTURAS_ESPECIAIS = Map.of(
+            "charged_creeper", "3511e4a3d5add6a54499abad10d799d06ce45cba9e520afd2008608a6288b7e7"
+    );
+
     public CabecasManager(CombatePlus plugin) {
         this.plugin = plugin;
     }
@@ -192,9 +196,30 @@ public final class CabecasManager implements Listener {
     }
 
     public ItemStack criarCabecaPorNome(String nome) {
+        String chave = nome.toLowerCase(Locale.ROOT).replace('-', '_').replace(' ', '_');
+        String texturaEspecial = TEXTURAS_ESPECIAIS.get(chave);
+        if (texturaEspecial != null) return criarCabecaComTextura(texturaEspecial);
+
         EntityType tipo = resolverTipo(nome);
         if (tipo == null) return null;
         return criarCabeca(tipo);
+    }
+
+    private ItemStack criarCabecaComTextura(String textura) {
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta rawMeta = item.getItemMeta();
+        if (!(rawMeta instanceof SkullMeta meta)) return item;
+
+        try {
+            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
+            profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/" + textura));
+            meta.setOwnerProfile(profile);
+        } catch (MalformedURLException exception) {
+            plugin.getLogger().warning("Textura especial inválida.");
+        }
+
+        item.setItemMeta(meta);
+        return item;
     }
 
     private ItemStack criarCabeca(EntityType tipo) {
