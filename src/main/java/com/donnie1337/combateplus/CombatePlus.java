@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CombatePlus extends JavaPlugin implements CommandExecutor {
+    public CabecasManager getCabecasManager() {
+        return cabecasManager;
+    }
     private CabecasManager cabecasManager;
 
     @Override
@@ -16,6 +19,7 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
         getServer().getPluginManager().registerEvents(cabecasManager, this);
         if (getCommand("combateplus") != null) {
             getCommand("combateplus").setExecutor(this);
+            getCommand("head").setExecutor(new HeadCommand(this));
         }
         getLogger().info("CombatePlus ativado.");
     }
