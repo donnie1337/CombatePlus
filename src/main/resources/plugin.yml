@@ -12,8 +12,18 @@ commands:
     aliases:
       - cplus
     permission: combateplus.admin
+  head:
+    description: Obtém uma cabeça de mob ou animal.
+    usage: /head <mob>
+    aliases:
+      - cabeca
+      - cabeça
+    permission: combateplus.head
 
 permissions:
   combateplus.admin:
     description: Permite administrar o CombatePlus.
+    default: op
+  combateplus.head:
+    description: Permite obter cabeças de mobs e animais.
     default: op
