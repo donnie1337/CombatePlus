@@ -1,0 +1,84 @@
+cabecas:
+  jogadores:
+    ativado: true
+    chance: 25.0
+    nome: "&fCabeça de %player%"
+    lore:
+      - ""
+      - "&7Pertenceu a &f%player%&7."
+      - ""
+
+  entidades:
+    ativado: true
+    chance-padrao: 10.0
+    tipos:
+      ZOMBIE:
+        ativado: true
+        chance: 10.0
+        material: ZOMBIE_HEAD
+        nome: "&2Cabeça de Zumbi"
+      SKELETON:
+        ativado: true
+        chance: 10.0
+        material: SKELETON_SKULL
+        nome: "&7Cabeça de Esqueleto"
+      WITHER_SKELETON:
+        ativado: true
+        chance: 10.0
+        material: WITHER_SKELETON_SKULL
+        nome: "&8Cabeça de Esqueleto Wither"
+      CREEPER:
+        ativado: true
+        chance: 10.0
+        material: CREEPER_HEAD
+        nome: "&aCabeça de Creeper"
+      PIGLIN:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&6Cabeça de Piglin"
+      COW:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&fCabeça de Vaca"
+      PIG:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&dCabeça de Porco"
+      SHEEP:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&fCabeça de Ovelha"
+      CHICKEN:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&eCabeça de Galinha"
+      RABBIT:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&fCabeça de Coelho"
+      HORSE:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&6Cabeça de Cavalo"
+      WOLF:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&fCabeça de Lobo"
+      CAT:
+        ativado: true
+        chance: 10.0
+        material: PLAYER_HEAD
+        nome: "&7Cabeça de Gato"
+
+mensagens:
+  recarregado: "&a&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &aConfiguração recarregada."
+  sem-permissao: "&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cVocê não tem permissão."
+  uso: "&e&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &fUse: &7/combateplus reload"
