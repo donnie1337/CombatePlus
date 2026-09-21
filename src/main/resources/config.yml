@@ -9,7 +9,7 @@ cabecas:
       - ""
 
   mobs-e-animais: true
-  chance-mobs-e-animais: 10.0
+  chance: 100
 
 mensagens:
   recarregado: "&a&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &aConfiguração recarregada."

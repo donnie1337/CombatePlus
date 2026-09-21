@@ -85,7 +85,7 @@ public final class CabecasManager implements Listener {
         if (entity instanceof Player) return;
         if (!plugin.getConfig().getBoolean("cabecas.mobs-e-animais", true)) return;
 
-        double chance = plugin.getConfig().getDouble("cabecas.chance-mobs-e-animais", 10.0D);
+        double chance = plugin.getConfig().getDouble("cabecas.chance", 100.0D);
         if (!rolou(chance)) return;
 
         ItemStack cabeca = criarCabeca(entity.getType());

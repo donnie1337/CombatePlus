@@ -31,7 +31,7 @@ public final class HeadCommand implements CommandExecutor {
             return true;
         }
 
-        ItemStack cabeca = plugin.getCabecasManager().criarCabecaPorNome(args[0]);
+        if (!plugin.getConfig().getBoolean("cabecas.mobs-e-animais", true)) {\n            player.sendMessage(color("&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cO sistema de cabeças de mobs e animais está desativado."));\n            return true;\n        }\n\n        ItemStack cabeca = plugin.getCabecasManager().criarCabecaPorNome(args[0]);
         if (cabeca == null) {
             player.sendMessage(color("&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cMob ou animal não encontrado."));
             return true;
