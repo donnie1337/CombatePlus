@@ -132,7 +132,11 @@ public final class CabecasManager implements Listener {
     }
 
     private String nomeEntidade(LivingEntity entity) {
-        String raw = entity.getType().name().toLowerCase().replace('_', ' ');
+        return nomeEntidade(entity.getType());
+    }
+
+    private String nomeEntidade(EntityType type) {
+        String raw = type.name().toLowerCase(Locale.ROOT).replace('_', ' ');
         StringBuilder result = new StringBuilder();
 
         for (String parte : raw.split(" ")) {
@@ -142,5 +146,4 @@ public final class CabecasManager implements Listener {
         }
 
         return result.toString();
-    }
-}
+    }}
