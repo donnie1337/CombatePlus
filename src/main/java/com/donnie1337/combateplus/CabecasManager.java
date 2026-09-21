@@ -38,7 +38,8 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.RABBIT, "5f6f6945d3e2860ff7dd35df790dced38d6c615e44beccb63143758e9b8d24c"),
             Map.entry(EntityType.ZOMBIE, "98a6884497de191592ec42bddae50ebe75edbe2468b968732609530d4171aa11"),
             Map.entry(EntityType.CREEPER, "d8e77b9937b793a63935d1b192d3623fc8c48b82163a3425d9af1931ac19ed"),
-            Map.entry(EntityType.PIGLIN, "6086148ff6fb19b94d83b2d6f76e30d72aba9a0b30c455187a5bb2414b5872e51")
+            Map.entry(EntityType.PIGLIN, "6086148ff6fb19b94d83b2d6f76e30d72aba9a0b30c455187a5bb2414b5872e51"),
+            Map.entry(EntityType.PANDA, "617700e458b0c7460c88dbde7b98d3d7c80fe958b64cb79de1b4bb1f27d9080")
     );
 
     public CabecasManager(CombatePlus plugin) {
@@ -106,6 +107,8 @@ public final class CabecasManager implements Listener {
             case SKELETON -> Material.SKELETON_SKULL;
             case CREEPER -> Material.CREEPER_HEAD;
             case PIGLIN -> Material.PIGLIN_HEAD;
+            case WITHER_SKELETON -> Material.WITHER_SKELETON_SKULL;
+            case ENDER_DRAGON -> Material.DRAGON_HEAD;
             default -> Material.PLAYER_HEAD;
         };
 
@@ -150,7 +153,8 @@ public final class CabecasManager implements Listener {
                 Map.entry("zumbi", EntityType.ZOMBIE),
                 Map.entry("esqueleto", EntityType.SKELETON),
                 Map.entry("creeper", EntityType.CREEPER),
-                Map.entry("piglin", EntityType.PIGLIN)
+                Map.entry("piglin", EntityType.PIGLIN),
+                Map.entry("panda", EntityType.PANDA)
         );
 
         EntityType alias = aliases.get(alvo);
