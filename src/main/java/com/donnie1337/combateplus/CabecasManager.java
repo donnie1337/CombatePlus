@@ -28,29 +28,31 @@ public final class CabecasManager implements Listener {
     private final CombatePlus plugin;
 
     private static final Map<EntityType, String> TEXTURAS = Map.ofEntries(
-            Map.entry(EntityType.SHEEP, "88170c84a763f8d3ac345c913d54a8654b20e35ec291844f16ebd386a7b0023d"),
-            Map.entry(EntityType.PIG, "d875eb45aca34a4d24c3dc1395fc020ccf37f825a17b054a22fd24b189c24c"),
-            Map.entry(EntityType.COW, "d2521e2639ebddab5a89e41f1187a7cee0a55ddaa9956b8676a9fd857c4bf68e"),
-            Map.entry(EntityType.CHICKEN, "dc535a78863988fbd28061babc68ed9048dc090ac295c51d34635a326b9512e2"),
-            Map.entry(EntityType.HORSE, "60a2db2f1eb93e5978d2dc91a74df43d7b75d9ec0e694fd7f2a652fbd15"),
-            Map.entry(EntityType.WOLF, "6b565d929644a8ce14c50dfbba33a788cdb06f23957324283dcee7e06d4eb00"),
-            Map.entry(EntityType.CAT, "9aabeb3bd9afa2c22e1b312383be7953640c5b0138aeffbbfa350daaf9fea"),
-            Map.entry(EntityType.RABBIT, "5f6f6945d3e2860ff7dd35df790dced38d6c615e44beccb63143758e9b8d24c"),
-            Map.entry(EntityType.ZOMBIE, "98a6884497de191592ec42bddae50ebe75edbe2468b968732609530d4171aa11"),
-            Map.entry(EntityType.CREEPER, "d8e77b9937b793a63935d1b192d3623fc8c48b82163a3425d9af1931ac19ed"),
-            Map.entry(EntityType.PIGLIN, "6086148ff6fb19b94d83b2d6f76e30d72aba9a0b30c455187a5bb2414b5872e51"),
-            Map.entry(EntityType.PANDA, "617700e458b0c7460c88dbde7b98d3d7c80fe958b64cb79de1b4bb1f27d9080"),
-            Map.entry(EntityType.AXOLOTL, "3b83a38a458c3cca0761e2c8210c6f5d2f3380e860d50d2f4756516a2642617d"),
-            Map.entry(EntityType.DOLPHIN, "8e9688b950d880b55b7aa2cfcd76e5a0fa94aac6d16f78e833f7443ea29fed3"),
-            Map.entry(EntityType.SQUID, "1f27c6e2c48a390c7e8bfdadfa41b52731bb0eccf7075ca878fe9b00cc242d5d"),
-            Map.entry(EntityType.GLOW_SQUID, "6ae1461a54aa54cf28dd6aeadac72c8d7c6913981dee13f2e33514256ad4b826"),
-            Map.entry(EntityType.COD, "4feeff4b7fcfce68b0f74df0db0ad0c01f7301d0c6d893699b402bd50bb376b0"),
-            Map.entry(EntityType.SALMON, "ef0b5ce781cf017224baccd9de367e41691b33ad4d84c03e49844052153465a7"),
-            Map.entry(EntityType.TROPICAL_FISH, "3524a49246cc5c8bf1ac9fdfba54f7ae15061de0462fe506a4e0971093ccbaf2"),
-            Map.entry(EntityType.PUFFERFISH, "432d4340a6c6fcf3d6efdededb104c73a69e7a88fe62142ace7774b523e753"),
-            Map.entry(EntityType.TURTLE, "3c02f91c04a06f5b5ab5b008619145c68d072a35d0058b4aa79d014a2c55c9c0"),
+            Map.entry(EntityType.ALLAY, "beea845cc0b58ff763decffe11cd1c845c5d09c3b04fe80b0663da5c7c699eb3"),
+            Map.entry(EntityType.ARMADILLO, "11e6a22de99193b0bf4912e9272cfe77ff2f0c08ed3c23dad6b738ebb3d89d"),
+            Map.entry(EntityType.BAT, "6de75a2cc1c950e82f62abe20d42754379dfad6f5ff546e58f1c09061862bb92"),
+            Map.entry(EntityType.BEE, "947322f831e3c168cfbd3e28fe925144b261e79eb39c771349fac55a8126473"),
+            Map.entry(EntityType.CAMEL, "3642c9f71131b5df4a8c21c8c6f10684f22abafb8cd68a1d55ac4bf263a53a31"),
+            Map.entry(EntityType.CAT, "389b56b5f1eb9b7d6f3be300d7ebf337a40c21f9c88e6e7d1ef7d333050030"),
+            Map.entry(EntityType.CHICKEN, "64a98b1c209a271f9fef41c0141466b18a10b779e4b3b6d38084c17b0ab3190b"),
+            Map.entry(EntityType.COW, "df3fc46c295a89b9e57947d1a5b1db7d04f93752e75c420e2551ed1d31373c6a"),
+            Map.entry(EntityType.DONKEY, "7201245fcdc6cc42694d8e67e566282e07bc00a0a397fc726609c2789fd9e6b1"),
+            Map.entry(EntityType.FOX, "d5513865b7f003b379f1fc1bab9710e1fd383ea181acea475a2306fd769b076"),
             Map.entry(EntityType.FROG, "79672bef44ed3f6ee3de0d5b47a9bf2cfbf7888ad5a3a8c2fbbef97a27d8811a"),
-            Map.entry(EntityType.TADPOLE, "6cc9b9740bd3adeba52e0ce0a77b3dfdef8d3a40555a4e8bb67d200cd62770d0")
+            Map.entry(EntityType.GOAT, "42d0f31734b54d42e03d641848357aaea627765cc0454c42414aa46c8df42c15"),
+            Map.entry(EntityType.HORSE, "246fcc9d88764b7219f6ed45ecd7af73c409d2daddc9ddf63911fac15da66ccb"),
+            Map.entry(EntityType.LLAMA, "9f7d90b305aa64313c8d4404d8d652a96eba8a754b67f4347dcccdd5a6a63398"),
+            Map.entry(EntityType.MOOSHROOM, "da82eb643d056eb26dae5e2ef77db0126f71d62d0e6dfd648ed4e6ecdf0cbb8"),
+            Map.entry(EntityType.MULE, "46dcda265e57e4f51b145aacbf5b59bdc6099ffd3cce0a661b2c0065d80930d8"),
+            Map.entry(EntityType.OCELOT, "8c433c1347313b23b67eec92f8807aed2566ec29fd416bdf7a59c22596628355"),
+            Map.entry(EntityType.PANDA, "df0085926cd8cdf3f1cf71e210cde5daf8708320547bd6df5795859c68d9b3f"),
+            Map.entry(EntityType.PARROT, "e2439a109494bca415c48b99d634545baee172fb28d936fd402f547383a53eca"),
+            Map.entry(EntityType.PIG, "3a9e18e56b9693e66383e6c1c58cc1b936078cba087451fd3b12567658c1c"),
+            Map.entry(EntityType.POLAR_BEAR, "f072d8cb8395c2bc84547e6ac9b8edeed78c8658c0ed1b883c629c3a7e90"),
+            Map.entry(EntityType.RABBIT, "90f3c8c5291c0eae68d865fd36e6a5ba6fcf9bbc5a348b58b61e69b318ed14cf"),
+            Map.entry(EntityType.SHEEP, "88170c84a763f8d3ac345c913d54a8654b20e35ec291844f16ebd386a7b0023d"),
+            Map.entry(EntityType.SNIFFER, "43f3be09a7353eeae94d88320cb5b242de2f719c0e5c16a486327c605db1d463"),
+            Map.entry(EntityType.WOLF, "b7c8952bbc932071777ecfa3b2372fd315791d2631c2dcdf3a0ccd733daa30cf")
     );
 
     public CabecasManager(CombatePlus plugin) {
@@ -106,6 +108,36 @@ public final class CabecasManager implements Listener {
         }
     }
 
+    public List<EntityType> animaisTerrestres() {
+        return List.of(
+                EntityType.BEE,
+                EntityType.ALLAY,
+                EntityType.DONKEY,
+                EntityType.GOAT,
+                EntityType.CAMEL,
+                EntityType.HORSE,
+                EntityType.RABBIT,
+                EntityType.SNIFFER,
+                EntityType.CHICKEN,
+                EntityType.CAT,
+                EntityType.OCELOT,
+                EntityType.LLAMA,
+                EntityType.WOLF,
+                EntityType.MOOSHROOM,
+                EntityType.BAT,
+                EntityType.MULE,
+                EntityType.SHEEP,
+                EntityType.PANDA,
+                EntityType.PARROT,
+                EntityType.PIG,
+                EntityType.FOX,
+                EntityType.FROG,
+                EntityType.ARMADILLO,
+                EntityType.POLAR_BEAR,
+                EntityType.COW
+        );
+    }
+
     public ItemStack criarCabecaPorNome(String nome) {
         EntityType tipo = resolverTipo(nome);
         if (tipo == null) return null;
@@ -152,15 +184,35 @@ public final class CabecasManager implements Listener {
         String alvo = nome.toLowerCase(Locale.ROOT).replace('-', '_').replace(' ', '_');
 
         Map<String, EntityType> aliases = Map.ofEntries(
-                Map.entry("ovelha", EntityType.SHEEP),
-                Map.entry("porco", EntityType.PIG),
-                Map.entry("vaca", EntityType.COW),
+                Map.entry("abelha", EntityType.BEE),
+                Map.entry("allay", EntityType.ALLAY),
+                Map.entry("tatu", EntityType.ARMADILLO),
+                Map.entry("armadillo", EntityType.ARMADILLO),
+                Map.entry("morcego", EntityType.BAT),
+                Map.entry("bat", EntityType.BAT),
+                Map.entry("camelo", EntityType.CAMEL),
+                Map.entry("gato", EntityType.CAT),
                 Map.entry("galinha", EntityType.CHICKEN),
+                Map.entry("vaca", EntityType.COW),
+                Map.entry("burro", EntityType.DONKEY),
+                Map.entry("raposa", EntityType.FOX),
+                Map.entry("sapo", EntityType.FROG),
+                Map.entry("cabra", EntityType.GOAT),
                 Map.entry("cavalo", EntityType.HORSE),
+                Map.entry("jaguatirica", EntityType.OCELOT),
+                Map.entry("lhama", EntityType.LLAMA),
                 Map.entry("lobo", EntityType.WOLF),
                 Map.entry("cachorro", EntityType.WOLF),
-                Map.entry("gato", EntityType.CAT),
+                Map.entry("mooshroom", EntityType.MOOSHROOM),
+                Map.entry("mula", EntityType.MULE),
+                Map.entry("ovelha", EntityType.SHEEP),
+                Map.entry("panda", EntityType.PANDA),
+                Map.entry("papagaio", EntityType.PARROT),
+                Map.entry("porco", EntityType.PIG),
+                Map.entry("urso_polar", EntityType.POLAR_BEAR),
+                Map.entry("urso polar", EntityType.POLAR_BEAR),
                 Map.entry("coelho", EntityType.RABBIT),
+                Map.entry("farejador", EntityType.SNIFFER),
                 Map.entry("zumbi", EntityType.ZOMBIE),
                 Map.entry("esqueleto", EntityType.SKELETON),
                 Map.entry("creeper", EntityType.CREEPER),
@@ -175,7 +227,6 @@ public final class CabecasManager implements Listener {
                 Map.entry("peixe_tropical", EntityType.TROPICAL_FISH),
                 Map.entry("baiacu", EntityType.PUFFERFISH),
                 Map.entry("tartaruga", EntityType.TURTLE),
-                Map.entry("sapo", EntityType.FROG),
                 Map.entry("girino", EntityType.TADPOLE)
         );
 
