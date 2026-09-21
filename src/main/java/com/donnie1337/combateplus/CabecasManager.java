@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class CabecasManager implements Listener {
@@ -80,14 +81,7 @@ public final class CabecasManager implements Listener {
 
 
     public ItemStack criarCabecaPorNome(String nome) {
-        EntityType tipo = null;
-        String alvo = nome.toLowerCase().replace('_', ' ');
-        for (EntityType candidate : EntityType.values()) {
-            if (candidate.name().toLowerCase().equals(alvo.replace(' ', '_'))) {
-                tipo = candidate;
-                break;
-            }
-        }
+        EntityType tipo = resolverTipo(nome);
         if (tipo == null) return null;
 
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
@@ -97,6 +91,34 @@ public final class CabecasManager implements Listener {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private EntityType resolverTipo(String nome) {
+        String alvo = nome.toLowerCase(Locale.ROOT).replace('-', '_').replace(' ', '_');
+
+        java.util.Map<String, EntityType> aliases = java.util.Map.ofEntries(
+                java.util.Map.entry("ovelha", EntityType.SHEEP),
+                java.util.Map.entry("porco", EntityType.PIG),
+                java.util.Map.entry("vaca", EntityType.COW),
+                java.util.Map.entry("galinha", EntityType.CHICKEN),
+                java.util.Map.entry("cavalo", EntityType.HORSE),
+                java.util.Map.entry("lobo", EntityType.WOLF),
+                java.util.Map.entry("cachorro", EntityType.WOLF),
+                java.util.Map.entry("gato", EntityType.CAT),
+                java.util.Map.entry("coelho", EntityType.RABBIT),
+                java.util.Map.entry("zumbi", EntityType.ZOMBIE),
+                java.util.Map.entry("esqueleto", EntityType.SKELETON),
+                java.util.Map.entry("creeper", EntityType.CREEPER),
+                java.util.Map.entry("piglin", EntityType.PIGLIN)
+        );
+
+        EntityType alias = aliases.get(alvo);
+        if (alias != null) return alias;
+
+        for (EntityType candidate : EntityType.values()) {
+            if (candidate.name().equalsIgnoreCase(alvo)) return candidate;
+        }
+        return null;
     }
 
     private boolean rolou(double chance) {
