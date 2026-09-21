@@ -46,6 +46,10 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.TADPOLE, "6cc9b9740bd3adeba52e0ce0a77b3dfdef8d3a40555a4e8bb67d200cd62770d0"),
             Map.entry(EntityType.TROPICAL_FISH, "e3d7767de7acd9fe9e03832574b248344f0ae06f4c1a7c6cb5c4b0923aefe56d"),
             Map.entry(EntityType.TURTLE, "212b58c841b394863dbcc54de1c2ad2648af8f03e648988c1f9cef0bc20ee23c"),
+            Map.entry(EntityType.DROWNED, "c84df79c49104b198cdad6d99fd0d0bcf1531c92d4ab6269e40b7d3cbbb8e98c"),
+            Map.entry(EntityType.ELDER_GUARDIAN, "30f868caf19cf2124f0fef98e6b8773d27fbf42d93aab06b22ee033b2aee6447"),
+            Map.entry(EntityType.GUARDIAN, "932c24524c82ab3b3e57c2052c533f13dd8c0beb8bdd06369bb2554da86c123"),
+            Map.entry(EntityType.NAUTILUS, "2968cac7af588bc410ecb47635f1ecab1962929cc788c756775f859c98da142"),
             Map.entry(EntityType.DONKEY, "7201245fcdc6cc42694d8e67e566282e07bc00a0a397fc726609c2789fd9e6b1"),
             Map.entry(EntityType.FOX, "d5513865b7f003b379f1fc1bab9710e1fd383ea181acea475a2306fd769b076"),
             Map.entry(EntityType.FROG, "79672bef44ed3f6ee3de0d5b47a9bf2cfbf7888ad5a3a8c2fbbef97a27d8811a"),
@@ -236,7 +240,16 @@ public final class CabecasManager implements Listener {
                 Map.entry("peixe_tropical", EntityType.TROPICAL_FISH),
                 Map.entry("baiacu", EntityType.PUFFERFISH),
                 Map.entry("tartaruga", EntityType.TURTLE),
-                Map.entry("girino", EntityType.TADPOLE)
+                Map.entry("girino", EntityType.TADPOLE),
+                Map.entry("afogado", EntityType.DROWNED),
+                Map.entry("drowned", EntityType.DROWNED),
+                Map.entry("guardiao_mestre", EntityType.ELDER_GUARDIAN),
+                Map.entry("guardiao mestre", EntityType.ELDER_GUARDIAN),
+                Map.entry("elder_guardian", EntityType.ELDER_GUARDIAN),
+                Map.entry("guardiao", EntityType.GUARDIAN),
+                Map.entry("guardian", EntityType.GUARDIAN),
+                Map.entry("nautilo", EntityType.NAUTILUS),
+                Map.entry("nautilus", EntityType.NAUTILUS)
         );
 
         EntityType alias = aliases.get(alvo);
