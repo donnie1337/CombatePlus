@@ -2,8 +2,6 @@ package com.donnie1337.combateplus;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class CabecasManager implements Listener {
@@ -62,38 +59,22 @@ public final class CabecasManager implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
+
         if (entity instanceof Player) return;
-        if (!plugin.getConfig().getBoolean("cabecas.entidades.ativado", true)) return;
+        if (!plugin.getConfig().getBoolean("cabecas.mobs-e-animais", true)) return;
 
-        EntityType type = entity.getType();
-        String path = "cabecas.entidades.tipos." + type.name();
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection(path);
-        if (section == null || !section.getBoolean("ativado", false)) return;
-
-        double chance = section.getDouble("chance",
-                plugin.getConfig().getDouble("cabecas.entidades.chance-padrao", 10.0D));
+        double chance = plugin.getConfig().getDouble("cabecas.chance-mobs-e-animais", 10.0D);
         if (!rolou(chance)) return;
 
-        String materialNome = section.getString("material", "PLAYER_HEAD");
-        Material material;
-        try {
-            material = Material.valueOf(materialNome.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ex) {
-            plugin.getLogger().warning("Material inválido em " + path + ".material: " + materialNome);
-            return;
-        }
+        ItemStack cabeca = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = cabeca.getItemMeta();
 
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String nome = section.getString("nome", "&fCabeça de " + nomeEntidade(type));
-            meta.setDisplayName(color(nome));
-            List<String> lore = section.getStringList("lore");
-            if (!lore.isEmpty()) meta.setLore(lore.stream().map(this::color).toList());
-            item.setItemMeta(meta);
+            meta.setDisplayName(color("&fCabeça de " + nomeEntidade(entity)));
+            cabeca.setItemMeta(meta);
         }
 
-        event.getDrops().add(item);
+        event.getDrops().add(cabeca);
     }
 
     private boolean rolou(double chance) {
@@ -106,13 +87,16 @@ public final class CabecasManager implements Listener {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    private String nomeEntidade(EntityType type) {
-        String raw = type.name().toLowerCase(Locale.ROOT).replace('_', ' ');
+    private String nomeEntidade(LivingEntity entity) {
+        String raw = entity.getType().name().toLowerCase().replace('_', ' ');
         StringBuilder result = new StringBuilder();
+
         for (String parte : raw.split(" ")) {
             if (!result.isEmpty()) result.append(' ');
-            result.append(Character.toUpperCase(parte.charAt(0))).append(parte.substring(1));
+            result.append(Character.toUpperCase(parte.charAt(0)))
+                    .append(parte.substring(1));
         }
+
         return result.toString();
     }
 }
