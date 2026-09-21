@@ -217,7 +217,6 @@ public final class CabecasManager implements Listener {
                 Map.entry("esqueleto", EntityType.SKELETON),
                 Map.entry("creeper", EntityType.CREEPER),
                 Map.entry("piglin", EntityType.PIGLIN),
-                Map.entry("panda", EntityType.PANDA),
                 Map.entry("axolote", EntityType.AXOLOTL),
                 Map.entry("golfinho", EntityType.DOLPHIN),
                 Map.entry("lula", EntityType.SQUID),
