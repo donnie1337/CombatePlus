@@ -48,6 +48,7 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.TURTLE, "212b58c841b394863dbcc54de1c2ad2648af8f03e648988c1f9cef0bc20ee23c"),
             Map.entry(EntityType.DROWNED, "c84df79c49104b198cdad6d99fd0d0bcf1531c92d4ab6269e40b7d3cbbb8e98c"),
             Map.entry(EntityType.ELDER_GUARDIAN, "30f868caf19cf2124f0fef98e6b8773d27fbf42d93aab06b22ee033b2aee6447"),
+            Map.entry(EntityType.ENDER_DRAGON, "ffcdae586b52403b92b1857ee4331bac636af08bab92ba5750a54a83331a6353"),
             Map.entry(EntityType.GUARDIAN, "932c24524c82ab3b3e57c2052c533f13dd8c0beb8bdd06369bb2554da86c123"),
             Map.entry(EntityType.NAUTILUS, "2968cac7af588bc410ecb47635f1ecab1962929cc788c756775f859c98da142"),
             Map.entry(EntityType.DONKEY, "7201245fcdc6cc42694d8e67e566282e07bc00a0a397fc726609c2789fd9e6b1"),
@@ -203,7 +204,6 @@ public final class CabecasManager implements Listener {
             case CREEPER -> Material.CREEPER_HEAD;
             case PIGLIN -> Material.PIGLIN_HEAD;
             case WITHER_SKELETON -> Material.WITHER_SKELETON_SKULL;
-            case ENDER_DRAGON -> Material.DRAGON_HEAD;
             default -> Material.PLAYER_HEAD;
         };
 
