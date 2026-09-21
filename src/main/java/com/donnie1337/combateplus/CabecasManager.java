@@ -40,17 +40,17 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.CREEPER, "d8e77b9937b793a63935d1b192d3623fc8c48b82163a3425d9af1931ac19ed"),
             Map.entry(EntityType.PIGLIN, "6086148ff6fb19b94d83b2d6f76e30d72aba9a0b30c455187a5bb2414b5872e51"),
             Map.entry(EntityType.PANDA, "617700e458b0c7460c88dbde7b98d3d7c80fe958b64cb79de1b4bb1f27d9080"),
-            Map.entry(EntityType.AXOLOTL, "3b83a38e458c3cca0716e2e8210c6f5d2f3380e860d50df475615a2642617d"),
-            Map.entry(EntityType.DOLPHIN, "8e9688b950d880b55b7aa2cfd76e5a0fa94aaf6d16f7833f7443ea29fed3"),
-            Map.entry(EntityType.SQUID, "1f27c6e2c48a390c7e8bfadfa41b52731bbececf7075ca878fe9b00cc242d5d"),
-            Map.entry(EntityType.GLOW_SQUID, "6ae1461a54aa54cf28d6aeaadac72c8d7c6913981dee13f2e33514256ad4b826"),
-            Map.entry(EntityType.COD, "4feeff4b7fcfce680bf74df0db0ad0c01f7301d0c69f893699b402bd50bb76b0"),
-            Map.entry(EntityType.SALMON, "ef0b5ce781cf017224baccd9de376e41691b33ad48d84c03e49844052153465a7"),
-            Map.entry(EntityType.TROPICAL_FISH, "3524a49246cc5c8bf1ac9fdfba54f7ae15061de0462fe506a4e0971093ccbf2"),
-            Map.entry(EntityType.PUFFERFISH, "432d4340a6c6fcf36efdededb104c73a69e7a88fe62142ace7774b523e753f"),
-            Map.entry(EntityType.TURTLE, "3c02f91c04a06f5b5ab5008619145c68d073a35d0058b4aa79d01a42c551c9c0"),
-            Map.entry(EntityType.FROG, "79672bef44ed3f6ee3de0d5b47a9bf2cfbf788ad53a8c2fbbe97a27d8811a"),
-            Map.entry(EntityType.TADPOLE, "6cc9b9740bd3adebe52e0ce0a77b3dfdef8d3a4055a4e8bb67d200cd62770d0")
+            Map.entry(EntityType.AXOLOTL, "3b83a38a458c3cca0761e2c8210c6f5d2f3380e860d50d2f4756516a2642617d"),
+            Map.entry(EntityType.DOLPHIN, "8e9688b950d880b55b7aa2cfcd76e5a0fa94aac6d16f78e833f7443ea29fed3"),
+            Map.entry(EntityType.SQUID, "1f27c6e2c48a390c7e8bfdadfa41b52731bb0eccf7075ca878fe9b00cc242d5d"),
+            Map.entry(EntityType.GLOW_SQUID, "6ae1461a54aa54cf28dd6aeadac72c8d7c6913981dee13f2e33514256ad4b826"),
+            Map.entry(EntityType.COD, "4feeff4b7fcfce68b0f74df0db0ad0c01f7301d0c6d893699b402bd50bb376b0"),
+            Map.entry(EntityType.SALMON, "ef0b5ce781cf017224baccd9de367e41691b33ad4d84c03e49844052153465a7"),
+            Map.entry(EntityType.TROPICAL_FISH, "3524a49246cc5c8bf1ac9fdfba54f7ae15061de0462fe506a4e0971093ccbaf2"),
+            Map.entry(EntityType.PUFFERFISH, "432d4340a6c6fcf3d6efdededb104c73a69e7a88fe62142ace7774b523e753"),
+            Map.entry(EntityType.TURTLE, "3c02f91c04a06f5b5ab5b008619145c68d072a35d0058b4aa79d014a2c55c9c0"),
+            Map.entry(EntityType.FROG, "79672bef44ed3f6ee3de0d5b47a9bf2cfbf7888ad5a3a8c2fbbef97a27d8811a"),
+            Map.entry(EntityType.TADPOLE, "6cc9b9740bd3adeba52e0ce0a77b3dfdef8d3a40555a4e8bb67d200cd62770d0")
     );
 
     public CabecasManager(CombatePlus plugin) {
