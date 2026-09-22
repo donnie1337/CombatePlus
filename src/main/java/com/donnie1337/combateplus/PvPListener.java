@@ -221,19 +221,42 @@ public final class PvPListener implements Listener {
             return;
         }
 
-        // A API de ConsumableComponent mudou entre builds 26.x.
-        // Use reflexão para não quebrar o plugin com NoSuchMethodError quando
-        // o servidor não expõe ItemMeta.hasConsumable()/getConsumable().
+        // Paper 26.2 usa o novo Data Component API para a animação de uso.
+        // Mantemos reflexão aqui para evitar incompatibilidade de API entre builds.
         try {
-            Class<?> componentClass = Class.forName(
-                    "org.bukkit.inventory.meta.components.consumable.ConsumableComponent"
+            Class<?> dataComponentTypesClass = Class.forName(
+                    "io.papermc.paper.datacomponent.DataComponentTypes"
+            );
+            Class<?> consumableClass = Class.forName(
+                    "io.papermc.paper.datacomponent.item.Consumable"
+            );
+            Class<?> builderClass = Class.forName(
+                    "io.papermc.paper.datacomponent.item.Consumable$Builder"
             );
             Class<?> animationClass = Class.forName(
-                    "org.bukkit.inventory.meta.components.consumable.ConsumableComponent$Animation"
+                    "io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation"
+            );
+            Class<?> valuedTypeClass = Class.forName(
+                    "io.papermc.paper.datacomponent.DataComponentType$Valued"
             );
 
             Object animationBlock = Enum.valueOf(
                     animationClass.asSubclass(Enum.class), "BLOCK"
+            );
+            Object dataComponentType = dataComponentTypesClass
+                    .getField("CONSUMABLE").get(null);
+            Object builder = consumableClass.getMethod("consumable").invoke(null);
+
+            builderClass.getMethod("animation", animationClass)
+                    .invoke(builder, animationBlock);
+            builderClass.getMethod("consumeSeconds", float.class)
+                    .invoke(builder, 86400.0f);
+            builderClass.getMethod("hasConsumeParticles", boolean.class)
+                    .invoke(builder, false);
+
+            Object consumable = builderClass.getMethod("build").invoke(builder);
+            java.lang.reflect.Method setData = ItemStack.class.getMethod(
+                    "setData", valuedTypeClass, Object.class
             );
 
             ItemStack[] contents = player.getInventory().getContents();
@@ -241,39 +264,20 @@ public final class PvPListener implements Listener {
                 ItemStack item = contents[slot];
                 if (!isSword(item)) continue;
 
+                setData.invoke(item, dataComponentType, consumable);
+
                 ItemMeta meta = item.getItemMeta();
-                if (meta == null) continue;
-
-                java.lang.reflect.Method hasConsumable =
-                        ItemMeta.class.getMethod("hasConsumable");
-                java.lang.reflect.Method getConsumable =
-                        ItemMeta.class.getMethod("getConsumable");
-                java.lang.reflect.Method setConsumable =
-                        ItemMeta.class.getMethod("setConsumable", componentClass);
-
-                if (Boolean.TRUE.equals(hasConsumable.invoke(meta))) {
-                    continue;
+                if (meta != null) {
+                    meta.getPersistentDataContainer().set(
+                            visualBlockKey, PersistentDataType.BYTE, (byte) 1
+                    );
+                    item.setItemMeta(meta);
                 }
-
-                Object consumable = getConsumable.invoke(meta);
-                componentClass.getMethod("setAnimation", animationClass)
-                        .invoke(consumable, animationBlock);
-                componentClass.getMethod("setConsumeSeconds", float.class)
-                        .invoke(consumable, 86400.0f);
-                componentClass.getMethod("setConsumeParticles", boolean.class)
-                        .invoke(consumable, false);
-                setConsumable.invoke(meta, consumable);
-
-                meta.getPersistentDataContainer().set(
-                        visualBlockKey, PersistentDataType.BYTE, (byte) 1
-                );
-                item.setItemMeta(meta);
                 contents[slot] = item;
             }
             player.getInventory().setContents(contents);
         } catch (ReflectiveOperationException | LinkageError ignored) {
-            // Build do Paper sem a API de ConsumableComponent: a animação
-            // é simplesmente ignorada, sem impedir o jogador de entrar.
+            // Servidor sem o Data Component API: não força a animação.
         }
     }
 
