@@ -8,6 +8,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CombatePlus extends JavaPlugin implements CommandExecutor {
+    public PvPListener getPvpListener() {
+        return pvpListener;
+    }
+
     public CabecasManager getCabecasManager() {
         return cabecasManager;
     }
