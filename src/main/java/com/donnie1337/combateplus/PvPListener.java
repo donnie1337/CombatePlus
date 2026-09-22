@@ -89,9 +89,9 @@ public final class PvPListener implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isSword(event.getItem())) {
+                Player player = event.getPlayer();
                 prepareSwordAnimation(player);
-                swordBlocking.add(event.getPlayer().getUniqueId());
-                event.getPlayer().setBlocking(true);
+                swordBlocking.add(player.getUniqueId());
             }
         } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             stopSwordBlocking(event.getPlayer());
@@ -188,9 +188,7 @@ public final class PvPListener implements Listener {
     }
 
     private void stopSwordBlocking(Player player) {
-        if (swordBlocking.remove(player.getUniqueId())) {
-            player.setBlocking(false);
-        }
+        swordBlocking.remove(player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
@@ -265,12 +263,6 @@ public final class PvPListener implements Listener {
             }
         }
 
-        for (UUID uuid : swordBlocking.toArray(UUID[]::new)) {
-            Player player = plugin.getServer().getPlayer(uuid);
-            if (player != null) {
-                player.setBlocking(false);
-            }
-        }
         swordBlocking.clear();
     }
 }
