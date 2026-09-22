@@ -20,6 +20,14 @@ pvp-1-8:
     # Valor alto = ataques praticamente sem intervalo, como na 1.8.
     velocidade: 100.0
 
+  bloqueio-espada:
+    # Botão direito com qualquer espada ativa o bloqueio estilo Minecraft 1.8.
+    ativado: true
+    # 0.50 = 50% de redução de dano corpo a corpo.
+    reducao-dano: 0.50
+    # Se true, o jogador para de bloquear imediatamente após receber um hit.
+    parar-ao-receber-hit: false
+
   escudo:
     # A 1.8 não possuía escudos. Remove apenas a redução de dano
     # causada pelo bloqueio moderno, mantendo armadura/resistência.
