@@ -9,8 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityKnockbackByEntityEvent;
-import org.bukkit.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -353,48 +351,6 @@ public final class PvPListener implements Listener {
         if (attribute != null) {
             attribute.setBaseValue(original);
         }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onKnockback(EntityKnockbackEvent event) {
-        if (!plugin.getConfig().getBoolean("pvp-1-8.knockback.ativado", true)) {
-            return;
-        }
-
-        Vector knockback = event.getFinalKnockback();
-        double horizontal = plugin.getConfig().getDouble(
-                "pvp-1-8.knockback.multiplicador-horizontal", 1.0
-        );
-        double vertical = plugin.getConfig().getDouble(
-                "pvp-1-8.knockback.multiplicador-vertical", 1.0
-        );
-
-        knockback.setX(knockback.getX() * horizontal);
-        knockback.setZ(knockback.getZ() * horizontal);
-        knockback.setY(knockback.getY() * vertical);
-
-        if (plugin.getConfig().getBoolean("pvp-1-8.knockback.sprint-bonus.ativado", true)
-                && event instanceof EntityKnockbackByEntityEvent byEntity
-                && byEntity.getSourceEntity() instanceof Player attacker
-                && attacker.isSprinting()
-                && hasFreshSprint(attacker)) {
-            double bonus = plugin.getConfig().getDouble(
-                    "pvp-1-8.knockback.sprint-bonus.multiplicador", 1.0
-            );
-            Vector raw = event.getKnockback();
-            Vector horizontalDirection = new Vector(raw.getX(), 0, raw.getZ());
-
-            if (horizontalDirection.lengthSquared() > 0.000001) {
-                horizontalDirection.normalize().multiply(
-                        plugin.getConfig().getDouble(
-                                "pvp-1-8.knockback.sprint-bonus.forca-extra", 0.0
-                        ) * bonus
-                );
-                knockback.add(horizontalDirection);
-            }
-        }
-
-        event.setFinalKnockback(knockback);
     }
 
     private boolean hasFreshSprint(Player player) {
