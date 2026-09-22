@@ -12,6 +12,9 @@ commands:
     aliases:
       - cplus
     permission: combateplus.admin
+  pvp:
+    description: Ativa ou desativa o PvP do jogador.
+    usage: /pvp
   head:
     description: Obtém uma cabeça de mob ou animal.
     usage: /head <mob>
