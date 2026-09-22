@@ -23,7 +23,6 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.consumable.ConsumableComponent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
@@ -221,22 +220,61 @@ public final class PvPListener implements Listener {
         if (!plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.animacao.ativado", true)) {
             return;
         }
-        ItemStack[] contents = player.getInventory().getContents();
-        for (int slot = 0; slot < contents.length; slot++) {
-            ItemStack item = contents[slot];
-            if (!isSword(item)) continue;
-            ItemMeta meta = item.getItemMeta();
-            if (meta == null || meta.hasConsumable()) continue;
-            ConsumableComponent consumable = meta.getConsumable();
-            consumable.setAnimation(ConsumableComponent.Animation.BLOCK);
-            consumable.setConsumeSeconds(86400.0f);
-            consumable.setConsumeParticles(false);
-            meta.setConsumable(consumable);
-            meta.getPersistentDataContainer().set(visualBlockKey, PersistentDataType.BYTE, (byte) 1);
-            item.setItemMeta(meta);
-            contents[slot] = item;
+
+        // A API de ConsumableComponent mudou entre builds 26.x.
+        // Use reflexão para não quebrar o plugin com NoSuchMethodError quando
+        // o servidor não expõe ItemMeta.hasConsumable()/getConsumable().
+        try {
+            Class<?> componentClass = Class.forName(
+                    "org.bukkit.inventory.meta.components.consumable.ConsumableComponent"
+            );
+            Class<?> animationClass = Class.forName(
+                    "org.bukkit.inventory.meta.components.consumable.ConsumableComponent$Animation"
+            );
+
+            Object animationBlock = Enum.valueOf(
+                    animationClass.asSubclass(Enum.class), "BLOCK"
+            );
+
+            ItemStack[] contents = player.getInventory().getContents();
+            for (int slot = 0; slot < contents.length; slot++) {
+                ItemStack item = contents[slot];
+                if (!isSword(item)) continue;
+
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) continue;
+
+                java.lang.reflect.Method hasConsumable =
+                        ItemMeta.class.getMethod("hasConsumable");
+                java.lang.reflect.Method getConsumable =
+                        ItemMeta.class.getMethod("getConsumable");
+                java.lang.reflect.Method setConsumable =
+                        ItemMeta.class.getMethod("setConsumable", componentClass);
+
+                if (Boolean.TRUE.equals(hasConsumable.invoke(meta))) {
+                    continue;
+                }
+
+                Object consumable = getConsumable.invoke(meta);
+                componentClass.getMethod("setAnimation", animationClass)
+                        .invoke(consumable, animationBlock);
+                componentClass.getMethod("setConsumeSeconds", float.class)
+                        .invoke(consumable, 86400.0f);
+                componentClass.getMethod("setConsumeParticles", boolean.class)
+                        .invoke(consumable, false);
+                setConsumable.invoke(meta, consumable);
+
+                meta.getPersistentDataContainer().set(
+                        visualBlockKey, PersistentDataType.BYTE, (byte) 1
+                );
+                item.setItemMeta(meta);
+                contents[slot] = item;
+            }
+            player.getInventory().setContents(contents);
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+            // Build do Paper sem a API de ConsumableComponent: a animação
+            // é simplesmente ignorada, sem impedir o jogador de entrar.
         }
-        player.getInventory().setContents(contents);
     }
 
     private boolean isMarkedVisualSword(ItemStack item) {
