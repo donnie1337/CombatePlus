@@ -1,6 +1,7 @@
 package com.donnie1337.combateplus;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -13,10 +14,15 @@ import org.bukkit.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.consumable.ConsumableComponent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -29,9 +35,11 @@ public final class PvPListener implements Listener {
     private final CombatePlus plugin;
     private final Map<UUID, Double> originalAttackSpeed = new HashMap<>();
     private final Set<UUID> swordBlocking = new HashSet<>();
+    private final NamespacedKey visualBlockKey;
 
     public PvPListener(CombatePlus plugin) {
         this.plugin = plugin;
+        this.visualBlockKey = new NamespacedKey(plugin, "sword-block-animation");
     }
 
     public void applyAttackSpeed(Player player) {
@@ -64,11 +72,12 @@ public final class PvPListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         applyAttackSpeed(event.getPlayer());
+        prepareSwordAnimation(event.getPlayer());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        swordBlocking.remove(event.getPlayer().getUniqueId());
+        stopSwordBlocking(event.getPlayer());
         restoreAttackSpeed(event.getPlayer());
     }
 
@@ -80,6 +89,7 @@ public final class PvPListener implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (isSword(event.getItem())) {
+                prepareSwordAnimation(player);
                 swordBlocking.add(event.getPlayer().getUniqueId());
                 event.getPlayer().setBlocking(true);
             }
@@ -96,7 +106,21 @@ public final class PvPListener implements Listener {
 
     @EventHandler
     public void onHeldItem(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        stopSwordBlocking(player);
+        plugin.getServer().getScheduler().runTask(plugin, () -> prepareSwordAnimation(player));
+    }
+
+    @EventHandler
+    public void onSwapHands(PlayerSwapHandItemsEvent event) {
         stopSwordBlocking(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onConsume(PlayerItemConsumeEvent event) {
+        if (isMarkedVisualSword(event.getItem())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -125,6 +149,34 @@ public final class PvPListener implements Listener {
         if (plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.parar-ao-receber-hit", false)) {
             stopSwordBlocking(player);
         }
+    }
+
+    private void prepareSwordAnimation(Player player) {
+        if (!plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.animacao.ativado", true)) {
+            return;
+        }
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int slot = 0; slot < contents.length; slot++) {
+            ItemStack item = contents[slot];
+            if (!isSword(item)) continue;
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null || meta.hasConsumable()) continue;
+            ConsumableComponent consumable = meta.getConsumable();
+            consumable.setAnimation(ConsumableComponent.Animation.BLOCK);
+            consumable.setConsumeSeconds(86400.0f);
+            consumable.setConsumeParticles(false);
+            meta.setConsumable(consumable);
+            meta.getPersistentDataContainer().set(visualBlockKey, PersistentDataType.BYTE, (byte) 1);
+            item.setItemMeta(meta);
+            contents[slot] = item;
+        }
+        player.getInventory().setContents(contents);
+    }
+
+    private boolean isMarkedVisualSword(ItemStack item) {
+        if (!isSword(item) || !item.hasItemMeta()) return false;
+        Byte marker = item.getItemMeta().getPersistentDataContainer().get(visualBlockKey, PersistentDataType.BYTE);
+        return marker != null && marker == 1;
     }
 
     private boolean isMeleeDamage(EntityDamageByEntityEvent event) {
