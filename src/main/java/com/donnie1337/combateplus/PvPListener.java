@@ -138,8 +138,17 @@ public final class PvPListener implements Listener {
         }
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (isSword(event.getItem())) {
-                Player player = event.getPlayer();
+            Player player = event.getPlayer();
+
+            // Escudo moderno tem prioridade quando está equipado na mão secundária.
+            // Nesse caso, deixamos o vanilla/Paper controlar o bloqueio do escudo.
+            if (isShield(player.getInventory().getItemInOffHand())) {
+                stopSwordBlocking(player);
+                return;
+            }
+
+            // Com espada na mão principal e sem escudo na off-hand, usa o bloqueio 1.8.
+            if (isSword(event.getItem()) && isSword(player.getInventory().getItemInMainHand())) {
                 prepareSwordAnimation(player);
                 swordBlocking.add(player.getUniqueId());
             }
@@ -293,6 +302,10 @@ public final class PvPListener implements Listener {
 
     private boolean isSword(ItemStack item) {
         return item != null && item.getType().name().endsWith("_SWORD");
+    }
+
+    private boolean isShield(ItemStack item) {
+        return item != null && item.getType() == Material.SHIELD;
     }
 
     private void stopSwordBlocking(Player player) {
