@@ -35,7 +35,22 @@ public final class PvPListener implements Listener {
     private final CombatePlus plugin;
     private final Map<UUID, Double> originalAttackSpeed = new HashMap<>();
     private final Set<UUID> swordBlocking = new HashSet<>();
+    private final Set<UUID> pvpDisabled = new HashSet<>();
     private final NamespacedKey visualBlockKey;
+
+    public boolean isPvpEnabled(Player player) {
+        return player != null && !pvpDisabled.contains(player.getUniqueId());
+    }
+
+    public boolean togglePvp(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (pvpDisabled.remove(uuid)) {
+            return true;
+        }
+        pvpDisabled.add(uuid);
+        stopSwordBlocking(player);
+        return false;
+    }
 
     public PvPListener(CombatePlus plugin) {
         this.plugin = plugin;
@@ -119,6 +134,21 @@ public final class PvPListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
         if (isMarkedVisualSword(event.getItem())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPvpToggleDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player victim)) {
+            return;
+        }
+
+        if (!(event.getDamager() instanceof Player attacker)) {
+            return;
+        }
+
+        if (!isPvpEnabled(victim) || !isPvpEnabled(attacker)) {
             event.setCancelled(true);
         }
     }
@@ -264,5 +294,6 @@ public final class PvPListener implements Listener {
         }
 
         swordBlocking.clear();
+        pvpDisabled.clear();
     }
 }
