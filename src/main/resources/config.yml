@@ -25,10 +25,6 @@ pvp-1-8:
     ativado: true
     distancia: 3.0
 
-  dano:
-    # Multiplicador do dano final de PvP entre jogadores.
-    multiplicador: 1.0
-
   bloqueio-espada:
     # Botão direito com qualquer espada ativa o bloqueio estilo Minecraft 1.8.
     ativado: true
