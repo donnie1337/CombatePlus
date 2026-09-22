@@ -3,8 +3,6 @@ package com.donnie1337.combateplus;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,18 +10,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.event.entity.EntityKnockbackEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class PvPListener implements Listener {
     private final CombatePlus plugin;
     private final Map<UUID, Double> originalAttackSpeed = new HashMap<>();
+    private final Set<UUID> swordBlocking = new HashSet<>();
 
     public PvPListener(CombatePlus plugin) {
         this.plugin = plugin;
@@ -63,7 +68,77 @@ public final class PvPListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        swordBlocking.remove(event.getPlayer().getUniqueId());
         restoreAttackSpeed(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onInteract(PlayerInteractEvent event) {
+        if (!plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.ativado", true)) {
+            return;
+        }
+
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (isSword(event.getItem())) {
+                swordBlocking.add(event.getPlayer().getUniqueId());
+                event.getPlayer().setBlocking(true);
+            }
+        } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            stopSwordBlocking(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onAnimation(PlayerAnimationEvent event) {
+        // Um ataque com a mão/espada encerra o bloqueio, como no combate 1.8.
+        stopSwordBlocking(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onHeldItem(PlayerItemHeldEvent event) {
+        stopSwordBlocking(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onSwordBlockDamage(EntityDamageByEntityEvent event) {
+        if (!plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.ativado", true)) {
+            return;
+        }
+
+        if (!(event.getEntity() instanceof Player player)
+                || !swordBlocking.contains(player.getUniqueId())
+                || !isSword(player.getInventory().getItemInMainHand())) {
+            return;
+        }
+
+        if (!isMeleeDamage(event)) {
+            return;
+        }
+
+        double reduction = plugin.getConfig().getDouble(
+                "pvp-1-8.bloqueio-espada.reducao-dano", 0.50
+        );
+        reduction = Math.max(0.0, Math.min(1.0, reduction));
+        event.setDamage(event.getDamage() * (1.0 - reduction));
+
+        // Receber um hit encerra o bloqueio apenas se configurado.
+        if (plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.parar-ao-receber-hit", false)) {
+            stopSwordBlocking(player);
+        }
+    }
+
+    private boolean isMeleeDamage(EntityDamageByEntityEvent event) {
+        return event.getDamager() instanceof Player;
+    }
+
+    private boolean isSword(ItemStack item) {
+        return item != null && item.getType().name().endsWith("_SWORD");
+    }
+
+    private void stopSwordBlocking(Player player) {
+        if (swordBlocking.remove(player.getUniqueId())) {
+            player.setBlocking(false);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
@@ -76,9 +151,10 @@ public final class PvPListener implements Listener {
             return;
         }
 
-        // A 1.8 não possuía escudos. Removemos somente a redução de bloqueio,
-        // preservando as demais reduções de dano (armadura, resistência etc.).
-        if (event.isApplicable(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING)) {
+        // O núcleo de bloqueio de espada acima controla a proteção 1.8.
+        // Aqui impedimos que o bloqueio moderno de escudo também reduza o dano.
+        if (!swordBlocking.contains(player.getUniqueId())
+                && event.isApplicable(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING)) {
             event.setDamage(
                     org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING,
                     0.0
@@ -136,5 +212,13 @@ public final class PvPListener implements Listener {
                 originalAttackSpeed.remove(uuid);
             }
         }
+
+        for (UUID uuid : swordBlocking.toArray(UUID[]::new)) {
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null) {
+                player.setBlocking(false);
+            }
+        }
+        swordBlocking.clear();
     }
 }
