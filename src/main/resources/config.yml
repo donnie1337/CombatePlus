@@ -20,6 +20,15 @@ pvp-1-8:
     # Valor alto = ataques praticamente sem intervalo, como na 1.8.
     velocidade: 100.0
 
+  alcance:
+    # Alcance de entidades usado pelo jogador. 3.0 é o alcance clássico do PvP 1.8.
+    ativado: true
+    distancia: 3.0
+
+  dano:
+    # Multiplicador do dano final de PvP entre jogadores.
+    multiplicador: 1.0
+
   bloqueio-espada:
     # Botão direito com qualquer espada ativa o bloqueio estilo Minecraft 1.8.
     ativado: true
@@ -39,14 +48,15 @@ pvp-1-8:
   knockback:
     ativado: true
     # Multiplicadores do knockback final calculado pelo servidor.
+    # Valores base do knockback são preservados e podem ser calibrados aqui.
     multiplicador-horizontal: 1.0
     multiplicador-vertical: 1.0
 
     sprint-bonus:
       ativado: true
-      # Força extra adicionada na direção do knockback quando o atacante
-      # está correndo. 0.0 mantém somente o knockback base.
-      forca-extra: 0.0
+      # O sprint dá o empurrão extra clássico. O bônus só vale para um
+      # sprint iniciado depois do último hit, reproduzindo sprint reset/W-tap.
+      forca-extra: 0.425
       multiplicador: 1.0
 
 mensagens:
