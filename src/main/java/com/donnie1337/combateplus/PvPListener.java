@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
@@ -35,6 +36,9 @@ import java.util.UUID;
 public final class PvPListener implements Listener {
     private final CombatePlus plugin;
     private final Map<UUID, Double> originalAttackSpeed = new HashMap<>();
+    private final Map<UUID, Double> originalEntityReach = new HashMap<>();
+    private final Map<UUID, Long> lastSprintStart = new HashMap<>();
+    private final Map<UUID, Long> lastAttack = new HashMap<>();
     private final Set<UUID> swordBlocking = new HashSet<>();
     private final Set<UUID> pvpDisabled = new HashSet<>();
     private final NamespacedKey visualBlockKey;
@@ -120,6 +124,7 @@ public final class PvPListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         applyAttackSpeed(event.getPlayer());
+        applyEntityReach(event.getPlayer());
         prepareSwordAnimation(event.getPlayer());
         updatePvpIndicator(event.getPlayer());
     }
@@ -129,6 +134,9 @@ public final class PvPListener implements Listener {
         stopSwordBlocking(event.getPlayer());
         clearPvpIndicator(event.getPlayer());
         restoreAttackSpeed(event.getPlayer());
+        restoreEntityReach(event.getPlayer());
+        lastSprintStart.remove(event.getPlayer().getUniqueId());
+        lastAttack.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -175,6 +183,13 @@ public final class PvPListener implements Listener {
         stopSwordBlocking(event.getPlayer());
     }
 
+    @EventHandler
+    public void onSprintToggle(PlayerToggleSprintEvent event) {
+        if (event.isSprinting()) {
+            lastSprintStart.put(event.getPlayer().getUniqueId(), System.nanoTime());
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
         if (isMarkedVisualSword(event.getItem())) {
@@ -212,6 +227,12 @@ public final class PvPListener implements Listener {
         if (!isMeleeDamage(event)) {
             return;
         }
+
+        double damageMultiplier = plugin.getConfig().getDouble(
+                "pvp-1-8.dano.multiplicador", 1.0
+        );
+        damageMultiplier = Math.max(0.0, damageMultiplier);
+        event.setDamage(event.getDamage() * damageMultiplier);
 
         double reduction = plugin.getConfig().getDouble(
                 "pvp-1-8.bloqueio-espada.reducao-dano", 0.50
@@ -312,6 +333,34 @@ public final class PvPListener implements Listener {
         swordBlocking.remove(player.getUniqueId());
     }
 
+    private void applyEntityReach(Player player) {
+        if (!plugin.getConfig().getBoolean("pvp-1-8.alcance.ativado", true)) {
+            return;
+        }
+
+        AttributeInstance attribute = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+        if (attribute == null) {
+            return;
+        }
+
+        UUID uuid = player.getUniqueId();
+        originalEntityReach.putIfAbsent(uuid, attribute.getBaseValue());
+        double reach = plugin.getConfig().getDouble("pvp-1-8.alcance.distancia", 3.0);
+        attribute.setBaseValue(Math.max(0.0, reach));
+    }
+
+    private void restoreEntityReach(Player player) {
+        Double original = originalEntityReach.remove(player.getUniqueId());
+        if (original == null) {
+            return;
+        }
+
+        AttributeInstance attribute = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(original);
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onKnockback(EntityKnockbackEvent event) {
         if (!plugin.getConfig().getBoolean("pvp-1-8.knockback.ativado", true)) {
@@ -333,7 +382,8 @@ public final class PvPListener implements Listener {
         if (plugin.getConfig().getBoolean("pvp-1-8.knockback.sprint-bonus.ativado", true)
                 && event instanceof EntityKnockbackByEntityEvent byEntity
                 && byEntity.getSourceEntity() instanceof Player attacker
-                && attacker.isSprinting()) {
+                && attacker.isSprinting()
+                && hasFreshSprint(attacker)) {
             double bonus = plugin.getConfig().getDouble(
                     "pvp-1-8.knockback.sprint-bonus.multiplicador", 1.0
             );
@@ -353,6 +403,25 @@ public final class PvPListener implements Listener {
         event.setFinalKnockback(knockback);
     }
 
+    private boolean hasFreshSprint(Player player) {
+        UUID uuid = player.getUniqueId();
+        Long sprintStart = lastSprintStart.get(uuid);
+        Long attack = lastAttack.get(uuid);
+        return sprintStart != null && (attack == null || sprintStart > attack);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSuccessfulAttack(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player attacker)
+                || !(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        UUID uuid = attacker.getUniqueId();
+        lastAttack.put(uuid, System.nanoTime());
+        attacker.setSprinting(false);
+    }
+
     public void restoreAll() {
         for (UUID uuid : originalAttackSpeed.keySet().toArray(UUID[]::new)) {
             Player player = plugin.getServer().getPlayer(uuid);
@@ -363,10 +432,21 @@ public final class PvPListener implements Listener {
             }
         }
 
+        for (UUID uuid : originalEntityReach.keySet().toArray(UUID[]::new)) {
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null) {
+                restoreEntityReach(player);
+            } else {
+                originalEntityReach.remove(uuid);
+            }
+        }
+
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             clearPvpIndicator(player);
         }
         swordBlocking.clear();
         pvpDisabled.clear();
+        lastSprintStart.clear();
+        lastAttack.clear();
     }
 }
