@@ -212,6 +212,20 @@ public final class PvPListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPvpDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)
+                || !(event.getDamager() instanceof Player)) {
+            return;
+        }
+
+        double damageMultiplier = plugin.getConfig().getDouble(
+                "pvp-1-8.dano.multiplicador", 1.0
+        );
+        damageMultiplier = Math.max(0.0, damageMultiplier);
+        event.setDamage(event.getDamage() * damageMultiplier);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSwordBlockDamage(EntityDamageByEntityEvent event) {
         if (!plugin.getConfig().getBoolean("pvp-1-8.bloqueio-espada.ativado", true)) {
@@ -227,12 +241,6 @@ public final class PvPListener implements Listener {
         if (!isMeleeDamage(event)) {
             return;
         }
-
-        double damageMultiplier = plugin.getConfig().getDouble(
-                "pvp-1-8.dano.multiplicador", 1.0
-        );
-        damageMultiplier = Math.max(0.0, damageMultiplier);
-        event.setDamage(event.getDamage() * damageMultiplier);
 
         double reduction = plugin.getConfig().getDouble(
                 "pvp-1-8.bloqueio-espada.reducao-dano", 0.50
