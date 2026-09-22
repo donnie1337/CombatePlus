@@ -11,6 +11,33 @@ cabecas:
   mobs-e-animais: true
   chance: 100
 
+# Núcleo de combate inspirado no PvP do Minecraft 1.8.
+# Todos os módulos abaixo podem ser ajustados individualmente.
+pvp-1-8:
+  ataque-cooldown:
+    # Neutraliza o attack cooldown das versões 1.9+.
+    ativado: true
+    # Valor alto = ataques praticamente sem intervalo, como na 1.8.
+    velocidade: 100.0
+
+  escudo:
+    # A 1.8 não possuía escudos. Remove apenas a redução de dano
+    # causada pelo bloqueio moderno, mantendo armadura/resistência.
+    ignorar-bloqueio: true
+
+  knockback:
+    ativado: true
+    # Multiplicadores do knockback final calculado pelo servidor.
+    multiplicador-horizontal: 1.0
+    multiplicador-vertical: 1.0
+
+    sprint-bonus:
+      ativado: true
+      # Força extra adicionada na direção do knockback quando o atacante
+      # está correndo. 0.0 mantém somente o knockback base.
+      forca-extra: 0.0
+      multiplicador: 1.0
+
 mensagens:
   recarregado: "&a&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &aConfiguração recarregada."
   sem-permissao: "&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cVocê não tem permissão."
