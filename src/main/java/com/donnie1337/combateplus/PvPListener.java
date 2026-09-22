@@ -18,6 +18,8 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,6 +39,7 @@ public final class PvPListener implements Listener {
     private final Set<UUID> swordBlocking = new HashSet<>();
     private final Set<UUID> pvpDisabled = new HashSet<>();
     private final NamespacedKey visualBlockKey;
+    private static final String PVP_TEAM_PREFIX = "combateplus_pvp_";
 
     public boolean isPvpEnabled(Player player) {
         return player != null && !pvpDisabled.contains(player.getUniqueId());
@@ -45,16 +48,47 @@ public final class PvPListener implements Listener {
     public boolean togglePvp(Player player) {
         UUID uuid = player.getUniqueId();
         if (pvpDisabled.remove(uuid)) {
+            updatePvpIndicator(player);
             return true;
         }
         pvpDisabled.add(uuid);
         stopSwordBlocking(player);
+        updatePvpIndicator(player);
         return false;
     }
 
     public PvPListener(CombatePlus plugin) {
         this.plugin = plugin;
         this.visualBlockKey = new NamespacedKey(plugin, "sword-block-animation");
+    }
+
+    private void updatePvpIndicator(Player player) {
+        Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getMainScoreboard();
+        String teamName = PVP_TEAM_PREFIX + player.getUniqueId().toString().replace("-", "").substring(0, 12);
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+        }
+
+        if (!team.hasEntry(player.getName())) {
+            team.addEntry(player.getName());
+        }
+
+        team.setSuffix(isPvpEnabled(player) ? " §a⚔" : " §c⚔");
+    }
+
+    private void clearPvpIndicator(Player player) {
+        Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getMainScoreboard();
+        String teamName = PVP_TEAM_PREFIX + player.getUniqueId().toString().replace("-", "").substring(0, 12);
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) {
+            return;
+        }
+
+        team.removeEntry(player.getName());
+        if (team.getEntries().isEmpty()) {
+            team.unregister();
+        }
     }
 
     public void applyAttackSpeed(Player player) {
@@ -88,11 +122,13 @@ public final class PvPListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         applyAttackSpeed(event.getPlayer());
         prepareSwordAnimation(event.getPlayer());
+        updatePvpIndicator(event.getPlayer());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         stopSwordBlocking(event.getPlayer());
+        clearPvpIndicator(event.getPlayer());
         restoreAttackSpeed(event.getPlayer());
     }
 
@@ -293,6 +329,9 @@ public final class PvPListener implements Listener {
             }
         }
 
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            clearPvpIndicator(player);
+        }
         swordBlocking.clear();
         pvpDisabled.clear();
     }
