@@ -299,27 +299,6 @@ public final class PvPListener implements Listener {
         swordBlocking.remove(player.getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
-    public void onDamage(EntityDamageByEntityEvent event) {
-        if (!plugin.getConfig().getBoolean("pvp-1-8.escudo.ignorar-bloqueio", true)) {
-            return;
-        }
-
-        if (!(event.getEntity() instanceof Player player) || !player.isBlocking()) {
-            return;
-        }
-
-        // O núcleo de bloqueio de espada acima controla a proteção 1.8.
-        // Aqui impedimos que o bloqueio moderno de escudo também reduza o dano.
-        if (!swordBlocking.contains(player.getUniqueId())
-                && event.isApplicable(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING)) {
-            event.setDamage(
-                    org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING,
-                    0.0
-            );
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onKnockback(EntityKnockbackEvent event) {
         if (!plugin.getConfig().getBoolean("pvp-1-8.knockback.ativado", true)) {
