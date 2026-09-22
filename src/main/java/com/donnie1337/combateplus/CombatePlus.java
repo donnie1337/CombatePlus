@@ -10,18 +10,39 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
     public CabecasManager getCabecasManager() {
         return cabecasManager;
     }
+
     private CabecasManager cabecasManager;
+    private PvPListener pvpListener;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+
         cabecasManager = new CabecasManager(this);
+        pvpListener = new PvPListener(this);
+
         getServer().getPluginManager().registerEvents(cabecasManager, this);
+        getServer().getPluginManager().registerEvents(pvpListener, this);
+
+        for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
+            pvpListener.applyAttackSpeed(player);
+        }
+
         if (getCommand("combateplus") != null) {
             getCommand("combateplus").setExecutor(this);
+        }
+        if (getCommand("head") != null) {
             getCommand("head").setExecutor(new HeadCommand(this));
         }
+
         getLogger().info("CombatePlus ativado.");
+    }
+
+    @Override
+    public void onDisable() {
+        if (pvpListener != null) {
+            pvpListener.restoreAll();
+        }
     }
 
     @Override
@@ -30,12 +51,19 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
             sender.sendMessage(message("mensagens.sem-permissao"));
             return true;
         }
+
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             reloadConfig();
             cabecasManager.reload();
+
+            for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
+                pvpListener.applyAttackSpeed(player);
+            }
+
             sender.sendMessage(message("mensagens.recarregado"));
             return true;
         }
+
         sender.sendMessage(message("mensagens.uso"));
         return true;
     }
