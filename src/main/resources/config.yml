@@ -27,6 +27,9 @@ pvp-1-8:
     reducao-dano: 0.50
     # Se true, o jogador para de bloquear imediatamente após receber um hit.
     parar-ao-receber-hit: false
+    animacao:
+      # Usa a animação BLOCK do cliente para levantar a própria espada.
+      ativado: true
 
   escudo:
     # A 1.8 não possuía escudos. Remove apenas a redução de dano
