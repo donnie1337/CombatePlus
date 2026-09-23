@@ -35,7 +35,7 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.BAT, "6de75a2cc1c950e82f62abe20d42754379dfad6f5ff546e58f1c09061862bb92"),
             Map.entry(EntityType.BEE, "947322f831e3c168cfbd3e28fe925144b261e79eb39c771349fac55a8126473"),
             Map.entry(EntityType.CAMEL, "3642c9f71131b5df4a8c21c8c6f10684f22abafb8cd68a1d55ac4bf263a53a31"),
-            Map.entry(EntityType.CAT, "389b56b5f1eb9b7d6f3be300d7ebf337a40c21f9c88e6e7d1ef7d333050030"),
+            Map.entry(EntityType.CAT, "c1631206b46193e1d1f19871c43b7f7d42c9fb84781a043b91a9bd6fcf54502"),
             Map.entry(EntityType.CHICKEN, "47479088e936d4fdf73373fa4e5888080cfed1cb43af2c3aa2be7c6631a9e0"),
             Map.entry(EntityType.COW, "ecc2d8fe1a004916e9f2d9d5043071aa21821bb80b221a44d5be9ca9da417419"),
             Map.entry(EntityType.AXOLOTL, "43ef6ea6622e3d627d1fba12a0c9caf2310e6b82cf3cae452d888547a3553026"),
