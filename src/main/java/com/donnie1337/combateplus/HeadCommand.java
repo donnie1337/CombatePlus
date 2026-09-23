@@ -31,7 +31,8 @@ public final class HeadCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getConfig().getBoolean("cabecas.mobs-e-animais", true)) {
+        if (!plugin.getConfig().getBoolean("cabecas.drops-customizados", false)
+                || !plugin.getConfig().getBoolean("cabecas.mobs-e-animais", false)) {
             player.sendMessage(color("&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cO sistema de cabeças de mobs e animais está desativado."));
             return true;
         }

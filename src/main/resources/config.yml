@@ -8,7 +8,10 @@ cabecas:
       - "&7Pertenceu a &f%player%&7."
       - ""
 
-  mobs-e-animais: true
+  # Desativa os drops customizados do plugin para mobs/animais.
+  # O Wither Skeleton continua usando o drop padrão do Minecraft.
+  drops-customizados: false
+  mobs-e-animais: false
   chance: 100
 
 # Núcleo de combate inspirado no PvP do Minecraft 1.8.

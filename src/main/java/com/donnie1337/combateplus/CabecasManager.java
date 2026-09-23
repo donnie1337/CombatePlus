@@ -245,7 +245,11 @@ public final class CabecasManager implements Listener {
         LivingEntity entity = event.getEntity();
 
         if (entity instanceof Player) return;
-        if (!plugin.getConfig().getBoolean("cabecas.mobs-e-animais", true)) return;
+        // Mantém o sistema disponível, mas permite desativar os drops customizados.
+        // Com a opção false, o Wither Skeleton continua usando exclusivamente a
+        // loot table vanilla do Minecraft (incluindo a chance e o Looting).
+        if (!plugin.getConfig().getBoolean("cabecas.drops-customizados", false)
+                || !plugin.getConfig().getBoolean("cabecas.mobs-e-animais", false)) return;
 
         double chance = plugin.getConfig().getDouble("cabecas.chance", 100.0D);
         if (!rolou(chance)) return;
