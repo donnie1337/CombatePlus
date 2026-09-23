@@ -353,7 +353,7 @@ public final class CabecasManager implements Listener {
             URL url = new URL("https://textures.minecraft.net/texture/" + textura);
             UUID profileId = UUID.nameUUIDFromBytes(
                     ("combateplus:mob-head:" + textura).getBytes(StandardCharsets.UTF_8));
-            PlayerProfile profile = Bukkit.createPlayerProfile(profileId, "CombatePlus");
+            PlayerProfile profile = Bukkit.createPlayerProfile(profileId);
             profile.getTextures().setSkin(url);
 
             // Paper expõe setPlayerProfile, que grava o ResolvableProfile diretamente.
