@@ -18,6 +18,7 @@ import org.bukkit.profile.PlayerProfile;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
@@ -109,8 +110,97 @@ public final class CabecasManager implements Listener {
             Map.entry(EntityType.WITHER, "5da97c06c07a035bd8746b48d32dc04e84160bd161f26be1272b6271251aaa7")
     );
 
+    private static final Map<EntityType, String> NOMES_PT_BR = Map.ofEntries(
+            Map.entry(EntityType.ALLAY, "Allay"),
+            Map.entry(EntityType.ARMADILLO, "Tatu"),
+            Map.entry(EntityType.BAT, "Morcego"),
+            Map.entry(EntityType.BEE, "Abelha"),
+            Map.entry(EntityType.BLAZE, "Blaze"),
+            Map.entry(EntityType.BOGGED, "Pantanoso"),
+            Map.entry(EntityType.BREEZE, "Vórtice"),
+            Map.entry(EntityType.CAMEL, "Camelo"),
+            Map.entry(EntityType.CAT, "Gato"),
+            Map.entry(EntityType.CAVE_SPIDER, "Aranha das Cavernas"),
+            Map.entry(EntityType.CHICKEN, "Galinha"),
+            Map.entry(EntityType.COD, "Bacalhau"),
+            Map.entry(EntityType.COW, "Vaca"),
+            Map.entry(EntityType.CREAKING, "Rangente"),
+            Map.entry(EntityType.CREEPER, "Creeper"),
+            Map.entry(EntityType.DOLPHIN, "Golfinho"),
+            Map.entry(EntityType.DONKEY, "Burro"),
+            Map.entry(EntityType.DROWNED, "Afogado"),
+            Map.entry(EntityType.ELDER_GUARDIAN, "Guardião-Mestre"),
+            Map.entry(EntityType.ENDER_DRAGON, "Dragão Ender"),
+            Map.entry(EntityType.ENDERMAN, "Enderman"),
+            Map.entry(EntityType.ENDERMITE, "Endermite"),
+            Map.entry(EntityType.EVOKER, "Invocador"),
+            Map.entry(EntityType.FOX, "Raposa"),
+            Map.entry(EntityType.FROG, "Sapo"),
+            Map.entry(EntityType.GHAST, "Ghast"),
+            Map.entry(EntityType.GLOW_SQUID, "Lula-Brilhante"),
+            Map.entry(EntityType.GOAT, "Cabra"),
+            Map.entry(EntityType.GUARDIAN, "Guardião"),
+            Map.entry(EntityType.HOGLIN, "Hoglin"),
+            Map.entry(EntityType.HORSE, "Cavalo"),
+            Map.entry(EntityType.HUSK, "Zumbi-Múmia"),
+            Map.entry(EntityType.ILLUSIONER, "Ilusionista"),
+            Map.entry(EntityType.IRON_GOLEM, "Golem de Ferro"),
+            Map.entry(EntityType.LLAMA, "Lhama"),
+            Map.entry(EntityType.MAGMA_CUBE, "Cubo de Magma"),
+            Map.entry(EntityType.MOOSHROOM, "Mooshroom"),
+            Map.entry(EntityType.MULE, "Mula"),
+            Map.entry(EntityType.NAUTILUS, "Náutilo"),
+            Map.entry(EntityType.OCELOT, "Jaguatirica"),
+            Map.entry(EntityType.PANDA, "Panda"),
+            Map.entry(EntityType.PARROT, "Papagaio"),
+            Map.entry(EntityType.PHANTOM, "Espectro"),
+            Map.entry(EntityType.PIG, "Porco"),
+            Map.entry(EntityType.PIGLIN, "Piglin"),
+            Map.entry(EntityType.PIGLIN_BRUTE, "Piglin Bárbaro"),
+            Map.entry(EntityType.PILLAGER, "Saqueador"),
+            Map.entry(EntityType.POLAR_BEAR, "Urso-Polar"),
+            Map.entry(EntityType.PUFFERFISH, "Baiacu"),
+            Map.entry(EntityType.RABBIT, "Coelho"),
+            Map.entry(EntityType.RAVAGER, "Devastador"),
+            Map.entry(EntityType.SALMON, "Salmão"),
+            Map.entry(EntityType.SHEEP, "Ovelha"),
+            Map.entry(EntityType.SHULKER, "Shulker"),
+            Map.entry(EntityType.SILVERFISH, "Traça"),
+            Map.entry(EntityType.SKELETON, "Esqueleto"),
+            Map.entry(EntityType.SKELETON_HORSE, "Cavalo-Esqueleto"),
+            Map.entry(EntityType.SLIME, "Slime"),
+            Map.entry(EntityType.SNIFFER, "Farejador"),
+            Map.entry(EntityType.SNOW_GOLEM, "Golem de Neve"),
+            Map.entry(EntityType.SPIDER, "Aranha"),
+            Map.entry(EntityType.SQUID, "Lula"),
+            Map.entry(EntityType.STRAY, "Errante"),
+            Map.entry(EntityType.STRIDER, "Lavagante"),
+            Map.entry(EntityType.TADPOLE, "Girino"),
+            Map.entry(EntityType.TRADER_LLAMA, "Lhama do Vendedor"),
+            Map.entry(EntityType.TROPICAL_FISH, "Peixe Tropical"),
+            Map.entry(EntityType.TURTLE, "Tartaruga"),
+            Map.entry(EntityType.VEX, "Vex"),
+            Map.entry(EntityType.VILLAGER, "Aldeão"),
+            Map.entry(EntityType.VINDICATOR, "Vingador"),
+            Map.entry(EntityType.WANDERING_TRADER, "Vendedor Ambulante"),
+            Map.entry(EntityType.WARDEN, "Defensor"),
+            Map.entry(EntityType.WITCH, "Bruxa"),
+            Map.entry(EntityType.WITHER, "Wither"),
+            Map.entry(EntityType.WITHER_SKELETON, "Esqueleto Wither"),
+            Map.entry(EntityType.WOLF, "Lobo"),
+            Map.entry(EntityType.ZOGLIN, "Zoglin"),
+            Map.entry(EntityType.ZOMBIE, "Zumbi"),
+            Map.entry(EntityType.ZOMBIE_HORSE, "Cavalo-Zumbi"),
+            Map.entry(EntityType.ZOMBIE_VILLAGER, "Aldeão Zumbi"),
+            Map.entry(EntityType.ZOMBIFIED_PIGLIN, "Piglin-Zumbi")
+    );
+
     private static final Map<String, String> TEXTURAS_ESPECIAIS = Map.of(
             "charged_creeper", "3511e4a3d5add6a54499abad10d799d06ce45cba9e520afd2008608a6288b7e7"
+    );
+
+    private static final Map<String, String> NOMES_ESPECIAIS = Map.of(
+            "charged_creeper", "Creeper Carregado"
     );
 
     public CabecasManager(CombatePlus plugin) {
@@ -199,20 +289,23 @@ public final class CabecasManager implements Listener {
     public ItemStack criarCabecaPorNome(String nome) {
         String chave = nome.toLowerCase(Locale.ROOT).replace('-', '_').replace(' ', '_');
         String texturaEspecial = TEXTURAS_ESPECIAIS.get(chave);
-        if (texturaEspecial != null) return criarCabecaComTextura(texturaEspecial);
+        if (texturaEspecial != null) {
+            return criarCabecaComTextura(texturaEspecial, NOMES_ESPECIAIS.getOrDefault(chave, "Creeper Carregado"));
+        }
 
         EntityType tipo = resolverTipo(nome);
         if (tipo == null) return null;
         return criarCabeca(tipo);
     }
 
-    private ItemStack criarCabecaComTextura(String textura) {
+    private ItemStack criarCabecaComTextura(String textura, String nome) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta rawMeta = item.getItemMeta();
         if (!(rawMeta instanceof SkullMeta meta)) return item;
 
-        aplicarTextura(meta, textura, "especial");
-
+        meta.setDisplayName(color("&fCabeça de " + nome));
+        meta.setMaxStackSize(64);
+        aplicarTextura(meta, textura, nome);
 
         item.setItemMeta(meta);
         return item;
@@ -240,8 +333,10 @@ public final class CabecasManager implements Listener {
         // Cabeças vanilla usam sua própria textura e não precisam de PlayerProfile.
         // Animais que não possuem um item de cabeça vanilla continuam usando textura customizada.
         if (material == Material.PLAYER_HEAD && textura != null) {
+            meta.setMaxStackSize(64);
             aplicarTextura(meta, textura, tipo.name());
-
+        } else if (material != Material.PLAYER_HEAD) {
+            meta.setMaxStackSize(64);
         }
 
         item.setItemMeta(meta);
@@ -256,7 +351,9 @@ public final class CabecasManager implements Listener {
 
         try {
             URL url = new URL("https://textures.minecraft.net/texture/" + textura);
-            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
+            UUID profileId = UUID.nameUUIDFromBytes(
+                    ("combateplus:mob-head:" + textura).getBytes(StandardCharsets.UTF_8));
+            PlayerProfile profile = Bukkit.createPlayerProfile(profileId, "CombatePlus");
             profile.getTextures().setSkin(url);
 
             // Paper expõe setPlayerProfile, que grava o ResolvableProfile diretamente.
@@ -354,6 +451,9 @@ public final class CabecasManager implements Listener {
     }
 
     private String nomeEntidade(EntityType type) {
+        String nomeTraduzido = NOMES_PT_BR.get(type);
+        if (nomeTraduzido != null) return nomeTraduzido;
+
         String raw = type.name().toLowerCase(Locale.ROOT).replace('_', ' ');
         StringBuilder result = new StringBuilder();
 
