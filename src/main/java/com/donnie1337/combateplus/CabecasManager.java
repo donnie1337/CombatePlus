@@ -18,6 +18,7 @@ import org.bukkit.profile.PlayerProfile;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -210,13 +211,8 @@ public final class CabecasManager implements Listener {
         ItemMeta rawMeta = item.getItemMeta();
         if (!(rawMeta instanceof SkullMeta meta)) return item;
 
-        try {
-            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
-            profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/" + textura));
-            meta.setOwnerProfile(profile);
-        } catch (MalformedURLException exception) {
-            plugin.getLogger().warning("Textura especial inválida.");
-        }
+        aplicarTextura(meta, textura, "especial");
+
 
         item.setItemMeta(meta);
         return item;
@@ -244,17 +240,36 @@ public final class CabecasManager implements Listener {
         // Cabeças vanilla usam sua própria textura e não precisam de PlayerProfile.
         // Animais que não possuem um item de cabeça vanilla continuam usando textura customizada.
         if (material == Material.PLAYER_HEAD && textura != null) {
-            try {
-                PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
-                profile.getTextures().setSkin(new URL("https://textures.minecraft.net/texture/" + textura));
-                meta.setOwnerProfile(profile);
-            } catch (MalformedURLException exception) {
-                plugin.getLogger().warning("Textura inválida para " + tipo.name() + ".");
-            }
+            aplicarTextura(meta, textura, tipo.name());
+
         }
 
         item.setItemMeta(meta);
         return item;
+    }
+
+    private void aplicarTextura(SkullMeta meta, String textura, String identificador) {
+        if (textura == null || textura.isBlank()) {
+            plugin.getLogger().warning("Textura ausente para " + identificador + ".");
+            return;
+        }
+
+        try {
+            URL url = new URL("https://textures.minecraft.net/texture/" + textura);
+            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), "CombatePlus");
+            profile.getTextures().setSkin(url);
+
+            // Paper expõe setPlayerProfile, que grava o ResolvableProfile diretamente.
+            // O fallback mantém compatibilidade com a API Spigot.
+            try {
+                Method setPlayerProfile = meta.getClass().getMethod("setPlayerProfile", PlayerProfile.class);
+                setPlayerProfile.invoke(meta, profile);
+            } catch (ReflectiveOperationException | SecurityException ignored) {
+                meta.setOwnerProfile(profile);
+            }
+        } catch (MalformedURLException | IllegalArgumentException exception) {
+            plugin.getLogger().warning("Textura inválida para " + identificador + ": " + textura);
+        }
     }
 
     private EntityType resolverTipo(String nome) {
