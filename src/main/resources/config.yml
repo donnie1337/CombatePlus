@@ -28,6 +28,12 @@ pvp-1-8:
     ativado: true
     distancia: 3.0
 
+  # Nestes mundos, cada jogador começa com o PvP individual desativado.
+  # O jogador pode ativá-lo usando /pvp.
+  mundos-pvp-desativado-por-padrao:
+    - world
+    - mining
+
   bloqueio-espada:
     # Botão direito com qualquer espada ativa o bloqueio estilo Minecraft 1.8.
     ativado: true

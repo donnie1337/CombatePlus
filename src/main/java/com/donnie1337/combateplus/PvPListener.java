@@ -28,6 +28,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -78,6 +79,28 @@ public final class PvPListener implements Listener {
     public PvPListener(CombatePlus plugin) {
         this.plugin = plugin;
         this.visualBlockKey = new NamespacedKey(plugin, "sword-block-animation");
+    }
+
+    public void refreshPvpState(Player player) {
+        if (player == null) {
+            return;
+        }
+
+        if (isPvpDefaultDisabledWorld(player) && !isPvpForced(player)) {
+            pvpDisabled.add(player.getUniqueId());
+            stopSwordBlocking(player);
+        }
+
+        updatePvpIndicator(player);
+    }
+
+    private boolean isPvpDefaultDisabledWorld(Player player) {
+        List<String> worlds = plugin.getConfig().getStringList(
+                "pvp-1-8.mundos-pvp-desativado-por-padrao"
+        );
+        String worldName = player.getWorld().getName();
+        return worlds.stream().anyMatch(world -> world != null
+                && world.equalsIgnoreCase(worldName));
     }
 
     private void updatePvpIndicator(Player player) {
@@ -142,12 +165,12 @@ public final class PvPListener implements Listener {
         applyAttackSpeed(event.getPlayer());
         applyEntityReach(event.getPlayer());
         prepareSwordAnimation(event.getPlayer());
-        updatePvpIndicator(event.getPlayer());
+        refreshPvpState(event.getPlayer());
     }
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
-        updatePvpIndicator(event.getPlayer());
+        refreshPvpState(event.getPlayer());
     }
 
     @EventHandler
