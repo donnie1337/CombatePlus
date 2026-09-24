@@ -57,4 +57,6 @@ mensagens:
   apenas-jogadores: "&c&lᴄᴏᴍʙᴀᴛᴇᴘʟᴜs &8• &cApenas jogadores podem usar este comando."
   pvp-ativado: "&a&lᴘᴠᴘ &8• &aSeu PvP foi ativado."
   pvp-desativado: "&c&lᴘᴠᴘ &8• &cSeu PvP foi desativado."
-  pvp-obrigatorio: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether e no The End."
+  pvp-obrigatorio: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório nesta dimensão."
+  pvp-obrigatorio-nether: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether."
+  pvp-obrigatorio-end: "&5&lᴘᴠᴘ &8• &5O PvP é obrigatório no The End."

@@ -62,10 +62,7 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
             }
 
             if (pvpListener.isPvpForced(player)) {
-                sender.sendMessage(message(
-                        "mensagens.pvp-obrigatorio",
-                        "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether e no The End."
-                ));
+                sender.sendMessage(forcedPvpMessage(player));
                 return true;
             }
 
@@ -93,6 +90,20 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
 
         sender.sendMessage(message("mensagens.uso"));
         return true;
+    }
+
+    private String forcedPvpMessage(Player player) {
+        if (player.getWorld().getEnvironment() == org.bukkit.World.Environment.NETHER) {
+            return message(
+                    "mensagens.pvp-obrigatorio-nether",
+                    "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether."
+            );
+        }
+
+        return message(
+                "mensagens.pvp-obrigatorio-end",
+                "&5&lᴘᴠᴘ &8• &5O PvP é obrigatório no The End."
+        );
     }
 
     private String message(String path) {
