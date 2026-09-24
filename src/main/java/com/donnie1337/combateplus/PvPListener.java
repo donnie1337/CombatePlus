@@ -98,6 +98,10 @@ public final class PvPListener implements Listener {
         List<String> worlds = plugin.getConfig().getStringList(
                 "pvp-1-8.mundos-pvp-desativado-por-padrao"
         );
+        if (worlds.isEmpty()) {
+            worlds = List.of("world", "mining");
+        }
+
         String worldName = player.getWorld().getName();
         return worlds.stream().anyMatch(world -> world != null
                 && world.equalsIgnoreCase(worldName));
