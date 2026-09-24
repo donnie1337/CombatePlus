@@ -102,7 +102,7 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
 
         return message(
                 "mensagens.pvp-obrigatorio-end",
-                "&5&lᴘᴠᴘ &8• &5O PvP é obrigatório no The End."
+                "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no The End."
         );
     }
 
