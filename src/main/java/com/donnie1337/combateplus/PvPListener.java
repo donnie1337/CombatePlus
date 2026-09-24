@@ -92,7 +92,8 @@ public final class PvPListener implements Listener {
             team.addEntry(player.getName());
         }
 
-        team.setSuffix(isPvpEnabled(player) ? " §a⚔" : " §c⚔");
+        // PvP ativo: espada vermelha. PvP desativado: escudo verde.
+        team.setSuffix(isPvpEnabled(player) ? " §c⚔" : " §a⛨");
     }
 
     private void clearPvpIndicator(Player player) {
