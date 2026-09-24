@@ -61,6 +61,14 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
+            if (pvpListener.isPvpForced(player)) {
+                sender.sendMessage(message(
+                        "mensagens.pvp-obrigatorio",
+                        "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether e no The End."
+                ));
+                return true;
+            }
+
             boolean enabled = pvpListener.togglePvp(player);
             sender.sendMessage(message(enabled ? "mensagens.pvp-ativado" : "mensagens.pvp-desativado"));
             return true;
@@ -88,6 +96,10 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
     }
 
     private String message(String path) {
-        return ChatColor.translateAlternateColorCodes('&', getConfig().getString(path, ""));
+        return message(path, "");
+    }
+
+    private String message(String path, String fallback) {
+        return ChatColor.translateAlternateColorCodes('&', getConfig().getString(path, fallback));
     }
 }

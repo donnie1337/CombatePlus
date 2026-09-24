@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -43,10 +44,26 @@ public final class PvPListener implements Listener {
     private static final String PVP_TEAM_PREFIX = "combateplus_pvp_";
 
     public boolean isPvpEnabled(Player player) {
-        return player != null && !pvpDisabled.contains(player.getUniqueId());
+        return player != null
+                && (isPvpForced(player) || !pvpDisabled.contains(player.getUniqueId()));
+    }
+
+    public boolean isPvpForced(Player player) {
+        if (player == null) {
+            return false;
+        }
+
+        org.bukkit.World.Environment environment = player.getWorld().getEnvironment();
+        return environment == org.bukkit.World.Environment.NETHER
+                || environment == org.bukkit.World.Environment.THE_END;
     }
 
     public boolean togglePvp(Player player) {
+        if (isPvpForced(player)) {
+            updatePvpIndicator(player);
+            return true;
+        }
+
         UUID uuid = player.getUniqueId();
         if (pvpDisabled.remove(uuid)) {
             updatePvpIndicator(player);
@@ -124,6 +141,11 @@ public final class PvPListener implements Listener {
         applyAttackSpeed(event.getPlayer());
         applyEntityReach(event.getPlayer());
         prepareSwordAnimation(event.getPlayer());
+        updatePvpIndicator(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
         updatePvpIndicator(event.getPlayer());
     }
 
