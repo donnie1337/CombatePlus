@@ -29,6 +29,7 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -40,13 +41,12 @@ public final class PvPListener implements Listener {
     private final Map<UUID, Long> lastSprintStart = new HashMap<>();
     private final Map<UUID, Long> lastAttack = new HashMap<>();
     private final Set<UUID> swordBlocking = new HashSet<>();
-    private final Set<UUID> pvpDisabled = new HashSet<>();
+    private final Map<UUID, Map<String, Boolean>> pvpStates = new HashMap<>();
     private final NamespacedKey visualBlockKey;
     private static final String PVP_TEAM_PREFIX = "combateplus_pvp_";
 
     public boolean isPvpEnabled(Player player) {
-        return player != null
-                && (isPvpForced(player) || !pvpDisabled.contains(player.getUniqueId()));
+        return player != null && (isPvpForced(player) || getSavedPvpState(player));
     }
 
     public boolean isPvpForced(Player player) {
@@ -65,15 +65,13 @@ public final class PvPListener implements Listener {
             return true;
         }
 
-        UUID uuid = player.getUniqueId();
-        if (pvpDisabled.remove(uuid)) {
-            updatePvpIndicator(player);
-            return true;
+        boolean enabled = !isPvpEnabled(player);
+        savePvpState(player, enabled);
+        if (!enabled) {
+            stopSwordBlocking(player);
         }
-        pvpDisabled.add(uuid);
-        stopSwordBlocking(player);
         updatePvpIndicator(player);
-        return false;
+        return enabled;
     }
 
     public PvPListener(CombatePlus plugin) {
@@ -86,8 +84,7 @@ public final class PvPListener implements Listener {
             return;
         }
 
-        if (isPvpDefaultDisabledWorld(player) && !isPvpForced(player)) {
-            pvpDisabled.add(player.getUniqueId());
+        if (!isPvpForced(player) && !isPvpEnabled(player)) {
             stopSwordBlocking(player);
         }
 
@@ -105,6 +102,20 @@ public final class PvPListener implements Listener {
         String worldName = player.getWorld().getName();
         return worlds.stream().anyMatch(world -> world != null
                 && world.equalsIgnoreCase(worldName));
+    }
+
+    private boolean getSavedPvpState(Player player) {
+        String worldName = player.getWorld().getName().toLowerCase(Locale.ROOT);
+        Map<String, Boolean> states = pvpStates.get(player.getUniqueId());
+        if (states != null && states.containsKey(worldName)) {
+            return states.get(worldName);
+        }
+        return !isPvpDefaultDisabledWorld(player);
+    }
+
+    private void savePvpState(Player player, boolean enabled) {
+        String worldName = player.getWorld().getName().toLowerCase(Locale.ROOT);
+        pvpStates.computeIfAbsent(player.getUniqueId(), ignored -> new HashMap<>()).put(worldName, enabled);
     }
 
     private void updatePvpIndicator(Player player) {
@@ -445,7 +456,7 @@ public final class PvPListener implements Listener {
             clearPvpIndicator(player);
         }
         swordBlocking.clear();
-        pvpDisabled.clear();
+        pvpStates.clear();
         lastSprintStart.clear();
         lastAttack.clear();
     }
