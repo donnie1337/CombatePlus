@@ -16,8 +16,21 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
         return cabecasManager;
     }
 
+    public boolean isCombatTagged(Player player) {
+        return combatTagManager != null && combatTagManager.isTagged(player);
+    }
+
+    public boolean isCombatTagged(java.util.UUID playerId) {
+        return combatTagManager != null && combatTagManager.isTagged(playerId);
+    }
+
+    public long getCombatTagRemainingSeconds(Player player) {
+        return combatTagManager == null ? 0L : combatTagManager.remainingSeconds(player);
+    }
+
     private CabecasManager cabecasManager;
     private PvPListener pvpListener;
+    private CombatTagManager combatTagManager;
 
     @Override
     public void onEnable() {
@@ -25,9 +38,12 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
 
         cabecasManager = new CabecasManager(this);
         pvpListener = new PvPListener(this);
+        combatTagManager = new CombatTagManager(this);
+        combatTagManager.start();
 
         getServer().getPluginManager().registerEvents(cabecasManager, this);
         getServer().getPluginManager().registerEvents(pvpListener, this);
+        getServer().getPluginManager().registerEvents(new CombatTagListener(this, combatTagManager), this);
 
         for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
             pvpListener.applyAttackSpeed(player);
@@ -48,6 +64,9 @@ public final class CombatePlus extends JavaPlugin implements CommandExecutor {
 
     @Override
     public void onDisable() {
+        if (combatTagManager != null) {
+            combatTagManager.shutdown();
+        }
         if (pvpListener != null) {
             pvpListener.restoreAll();
         }

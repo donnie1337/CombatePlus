@@ -60,3 +60,23 @@ mensagens:
   pvp-obrigatorio: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório nesta dimensão."
   pvp-obrigatorio-nether: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no Nether."
   pvp-obrigatorio-end: "&c&lᴘᴠᴘ &8• &cO PvP é obrigatório no The End."
+  combat-tag-iniciado: "&c&lᴄᴏᴍʙᴀᴛᴇ &8• &fVocê entrou em combate por &c{tempo}s&f."
+  combat-tag-finalizado: "&a&lᴄᴏᴍʙᴀᴛᴇ &8• &fVocê saiu de combate."
+  combat-tag-comando-bloqueado: "&c&lᴄᴏᴍʙᴀᴛᴇ &8• &cVocê não pode usar este comando em combate. Aguarde &f{tempo}s&c."
+
+
+# Combat Tag: impede fuga por comandos logo após combate PvP.
+combat-tag:
+  ativado: true
+  duracao-segundos: 15
+  comandos-bloqueados:
+    - rtp
+    - home
+    - homes
+    - sethome
+    - tpa
+    - tpaqui
+    - tpaccept
+    - tpaceitar
+    - spawn
+    - pvp
