@@ -69,6 +69,8 @@ mensagens:
 combat-tag:
   ativado: true
   duracao-segundos: 15
+  # Se o jogador desconectar durante o Combat Tag, ele morre e perde os itens.
+  punir-logout: true
   comandos-bloqueados:
     - rtp
     - home

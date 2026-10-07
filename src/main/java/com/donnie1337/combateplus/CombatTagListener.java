@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.List;
@@ -77,8 +78,18 @@ public final class CombatTagListener implements Listener {
             return;
         }
 
-        // Força uma morte real para usar o fluxo vanilla/Paper de drops,
-        // preservando regras como keepInventory quando configuradas pelo mundo.
+        // O servidor usa keepInventory em alguns mundos. Para a punição de
+        // Combat Tag, os itens precisam ser perdidos mesmo nesses mundos.
+        // Fazemos o drop antes da morte e limpamos o inventário para impedir
+        // duplicação pelo evento de morte.
+        ItemStack[] contents = player.getInventory().getContents();
+        player.getInventory().clear();
+
+        for (ItemStack item : contents) {
+            if (item == null || item.getType().isAir()) continue;
+            player.getWorld().dropItemNaturally(player.getLocation(), item.clone());
+        }
+
         player.setHealth(0.0D);
     }
 
