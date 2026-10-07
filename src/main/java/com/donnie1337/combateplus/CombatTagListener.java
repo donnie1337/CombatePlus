@@ -62,9 +62,24 @@ public final class CombatTagListener implements Listener {
                 .replace("{tempo}", String.valueOf(manager.remainingSeconds(player))));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
-        manager.clear(event.getPlayer(), false);
+        Player player = event.getPlayer();
+        if (!manager.isTagged(player)) {
+            manager.clear(player, false);
+            return;
+        }
+
+        boolean punish = plugin.getConfig().getBoolean("combat-tag.punir-logout", true);
+        manager.clear(player, false);
+
+        if (!punish || player.isDead()) {
+            return;
+        }
+
+        // Força uma morte real para usar o fluxo vanilla/Paper de drops,
+        // preservando regras como keepInventory quando configuradas pelo mundo.
+        player.setHealth(0.0D);
     }
 
     private Player resolvePlayerDamager(Entity damager) {
